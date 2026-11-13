@@ -1,0 +1,101 @@
+/* ==========================================================================
+   MENÚ LATERAL - SOLUCIÓN DEFINITIVA SUPERPOSICIÓN
+   ========================================================================== */
+
+/* Localización: menuLateral.css */
+
+/* 1. Estado inicial de la flecha (apuntando a la derecha o cerrada) */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-icon {
+    transition: transform 0.3s ease !important; /* Animación suave */
+    display: inline-block !important;
+}
+
+/* 2. Cuando el menú está abierto (.ui-state-active) */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-header.ui-state-active .ui-panelmenu-icon {
+    transform: rotate(90deg) !important; /* Rota la flecha 90 grados hacia abajo */
+    color: #036fab !important; /* Cambia a tu color corporativo si gustas */
+}
+
+/* 3. Corrección del Texto */
+.layout-sidebar .ui-panelmenu .ui-menuitem-text {
+    position: static !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important; /* Evita que el texto salte de línea */
+}
+
+/* 4. Estilos Visuales de los Padres (Headers) */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-header {
+    background: transparent !important;
+    border: none !important;
+    margin: 4px 8px !important;
+}
+
+.layout-sidebar .ui-panelmenu .ui-panelmenu-header a {
+    background-color: transparent !important;
+    color: #495057 !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+}
+
+/* Estado cuando el menú padre está abierto o seleccionado */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-header.ui-state-active a {
+    background-color: #e3f2fd !important;
+    color: #036fab !important;
+}
+
+/* 5. Estilos de los Hijos (Submenús) */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-content {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 0 0 20px !important; /* Indentación para jerarquía */
+}
+
+.layout-sidebar .ui-panelmenu .ui-menuitem-link {
+    color: #64748b !important;
+    margin: 2px 8px !important;
+    border-radius: 6px !important;
+}
+
+.layout-sidebar .ui-panelmenu .ui-menuitem-link:hover {
+    background-color: #f1f5f9 !important;
+    color: #036fab !important;
+}
+
+/* 6. Flecha de expansión (la que indica si hay submenú) */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-icon {
+    order: 2; /* Mueve la flecha al final (derecha) si prefieres */
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* Forzar que los grupos cerrados no muestren borde azul */
+.layout-sidebar .ui-panelmenu-header:not(.ui-state-active) {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Fuerza el estilo del encabezado cuando está activo mediante nuestro script */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-header.ui-state-active a {
+    background-color: #e3f2fd !important; /* Fondo azul claro */
+    color: #036fab !important;           /* Texto azul oscuro */
+}
+
+/* Asegura que la flecha cambie de color y posición */
+.layout-sidebar .ui-panelmenu .ui-panelmenu-header.ui-state-active .ui-panelmenu-icon {
+    color: #036fab !important;
+    transform: rotate(0deg); /* O ajuste según tu versión de PrimeIcons */
+}
+
+/* Ítem hijo seleccionado */
+.layout-sidebar .ui-panelmenu .menu-item-active > a {
+    background-color: #f1f5f9 !important;
+    border-left: 4px solid #036fab !important;
+    font-weight: bold !important;
+    color: #036fab !important;
+}
+
+.layout-sidebar {
+    z-index: 100 !important;
+}

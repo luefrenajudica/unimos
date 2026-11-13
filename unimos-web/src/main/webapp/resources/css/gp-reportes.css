@@ -1,0 +1,211 @@
+#filtros_gp_reportes {
+    width: 98%;
+    background: #f5f5f5;
+    display: inline-block;
+    padding-top: 4px;
+    padding-left: 11px;
+    padding-right: 15px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    text-align: left;
+}
+.ui-toolbar-group-left {
+    float: none!important;
+}
+
+#titulo_modulo {
+    background: #f5f5f5;
+    padding-left:11px;
+    text-align:left;
+}
+
+#filtros_gp_reportes {
+    width: 97%;
+    background: #f5f5f5;
+    display: inline-block;
+    padding-top: 4px;
+    padding-left: 11px;
+    padding-right: 15px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    text-align: left;
+    border-top: 1px #d4d4d4 solid;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter {
+    width: 89%;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container {
+    width: 96%;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
+    right: 15px;
+}
+
+#fila2 {
+    display: inline-block;
+    margin-top: 10px;
+    width:100%;
+}
+
+.ui-selectonemenu {
+    width:88%!important;
+}
+
+@media only screen and (min-width:960px) {
+    .col-sm-4 {
+        width:24%;
+        float:left;
+        position:relative;
+    } 
+}
+
+@media only screen and (max-width:959px) {
+    .col-sm-4 {
+        width:100%;
+        float:left;
+        position:relative;
+    } 
+}
+
+.calendario input {
+    width: 83%;
+}
+
+.grafica-tareas {
+}
+
+.contenedor-grafica-tareas {
+    overflow-x: scroll;
+    width: 72%;
+    float: left;
+    background: #e8e8e8;
+    height: 330px;
+    padding-top: 10px;
+    padding-left: 14px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #d4d4d4;
+    padding-right: 14px;
+}
+.contenedor-grafica-actividades {
+    overflow-x: scroll;
+    width: 72%;
+    float: left;
+    background: #e8e8e8;
+    height: 330px;
+    padding-top: 10px;
+    padding-left: 14px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #d4d4d4;
+    padding-right: 14px;
+}
+.jqplot-table-legend{
+
+}
+
+.scrollbar
+{
+    float: left;
+    background: #F5F5F5;
+    overflow-y: hidden;
+}
+.style-1::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+.style-1::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+.style-1::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #0088cc;
+}
+
+.contenedor-medidor-tareas {
+    width: 24%;
+    float: left;
+    background: #f5f5f5;
+    height: 340px;
+    border: 2px solid #d4d4d4;
+}
+
+/* RESPONSIVE (NOT RESIZABLE) */
+@media only screen and (min-width:990px) and (max-width:1154px) {
+    .contenedor-medidor-tareas {
+        width:23%;
+    }
+}
+@media only screen and (max-width:990px) {
+    .contenedor-medidor-tareas {
+        width:100%;
+    }
+    .contenedor-grafica-tareas {
+        width:100%;
+    }
+}
+
+.jqplot-meterGauge-label {
+    font-size: 1em;
+    color: white;
+    border: 0px;
+    position: absolute;
+    bottom: 0px;
+    top: inherit!important;
+    background: #0088cc;
+    width: 100%;
+    left: 0px!important;
+    font-weight: bold;
+}
+
+.meter-gauge .jqplot-title {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 271px;
+    text-align: center;
+    background: #f5f5f5;
+    color: #6e6e6e;
+    padding-top: 13px;
+    z-index: 1;
+    width: 100%!important;
+    font-size: 15px;
+}
+
+.grafica-tareas .jqplot-title {
+    position: absolute!important;
+    width: 100%!important;
+    text-align: center!important;
+    max-width: 816px;
+}
+
+.meter-gauge .jqplot-series-canvas {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #999999;
+    -webkit-box-shadow: 7px 9px 5px -6px rgba(153,153,153,1);
+    -moz-box-shadow: 7px 9px 5px -6px rgba(153,153,153,1);
+    box-shadow: 7px 9px 5px -6px rgba(153,153,153,1);
+    width: 91%;
+    padding-top: 7px;
+    margin-top: 10px;
+}
+
+.jqplot-meterGauge-tick {
+    font-size: .75em;
+    color: #999;
+    margin-top: 25px;
+}
+
+.meter-gauge .jqplot-grid-canvas{
+    top:16px!important;
+}

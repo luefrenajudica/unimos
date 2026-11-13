@@ -1,0 +1,471 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>        
+        <center>
+
+            <!-- Listar -->
+            <h:form id="frmPersonas">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{personaBean.modulo.descripcion}">#{personaBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{personaBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{personaBean.refrescar}" icon="pi pi-sync " styleClass="boton-normal btn1"/>
+                        <p:commandButton rendered="#{personaBean.accionCrear}" title="Crear" actionListener="#{personaBean.crear}" icon="pi pi-file-o" styleClass="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaWidget" var="obj" value="#{personaBean.lazyRegistros}" rowKey="#{obj.id}"
+                             rows="#{personaBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros" >
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>    
+                        <p:commandButton rendered="#{personaBean.accionVer}" title="Ver" actionListener="#{personaBean.ver(obj.id)}" icon="pi pi-search" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{personaBean.accionEditar}" title="Editar" actionListener="#{personaBean.editar(obj.id)}" icon="pi pi-pencil" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{personaBean.accionBorrar}" title="Borrar" action="#{personaBean.borrar(obj.id)}" icon="pi pi-trash" class="boton-normal btn1">
+                            <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Tipo Documento">
+                        <h:outputText value="#{obj.maeTipoDocumentoCodigo}" title="#{obj.maeTipoDocumentoValor}"/>
+                    </p:column>
+                    <p:column headerText="Número Documento" sortBy="#{obj.documentoNumero}" filterBy="#{obj.documentoNumero}">
+                        <f:facet name="filter">
+                            <p:inputText label="Número Documento" maxlength="64" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.documentoNumero}"/>
+                    </p:column>
+                    <p:column headerText="Primer Nombre" sortBy="#{obj.primerNombre}" filterBy="#{obj.primerNombre}">
+                        <f:facet name="filter">
+                            <p:inputText label="Primer Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.primerNombre}"/>
+                    </p:column>
+                    <p:column headerText="Segundo Nombre" sortBy="#{obj.segundoNombre}" filterBy="#{obj.segundoNombre}">
+                        <f:facet name="filter">
+                            <p:inputText label="Segundo Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.segundoNombre}"/>
+                    </p:column>
+                    <p:column headerText="Primer Apellido" sortBy="#{obj.primerApellido}" filterBy="#{obj.primerApellido}">
+                        <f:facet name="filter">
+                            <p:inputText label="Primer Apellido" maxlength="64" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.primerApellido}"/>
+                    </p:column>                    
+                    <p:column headerText="Segundo Apellido" sortBy="#{obj.segundoApellido}" filterBy="#{obj.segundoApellido}">
+                        <f:facet name="filter">
+                            <p:inputText label="Segundo Apellido" maxlength="64" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.segundoApellido}"/>
+                    </p:column>
+                    <p:column headerText="Municipio Residencia" filterBy="#{obj.gnDireccionUbicacion.id}">
+                        <f:facet name="filter">
+                            <p:autoComplete label="Municio Residencia" onchange="PF('tablaWidget').filter()" dropdown="false" completeMethod="#{personaBean.completarUbicacion}"
+                                            var="ubica" itemLabel="#{personaBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" forceSelection="true" style="width: 95%;"> 
+                            </p:autoComplete>
+                        </f:facet>
+                        <h:outputText value="#{personaBean.getUbicacionRecursiva(obj.gnDireccionUbicacion.id)}"/>
+                    </p:column>
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <!-- Ver -->
+            <p:dialog header="Ver" widgetVar="dialogoVer" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form class="frmAuditoria" style="text-align: right;">
+                        <p:commandButton id="auditoria" class="boton-normal btn1" action="#{personaBean.getAuditoria(personaBean.objeto.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" />
+                    </h:form>
+                    <h:form id="frmVer">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pVer" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelVer" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor"
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Documento" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.maeTipoDocumentoValor}"/>
+
+                                    <p:outputLabel value="Número Docuemnto" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.documentoNumero}"/>
+
+                                    <p:outputLabel value="Primer Nombre" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.primerNombre}"/>
+
+                                    <p:outputLabel value="Segundo Nombre" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.segundoNombre}"/>
+
+                                    <p:outputLabel value="Primer Apellido" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.primerApellido}"/>
+
+                                    <p:outputLabel value="Segundo Apellido" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.segundoApellido}"/>
+
+                                    <p:outputLabel value="Género" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.maeSexoValor}"/>
+
+                                    <p:outputLabel value="Estado Civil" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.maeEstadoCivilValor}"/>
+
+                                    <p:outputLabel value="Municipio Residencia" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.getUbicacionRecursiva(personaBean.objeto.gnDireccionUbicacion.id)}"/>
+
+                                    <p:outputLabel value="Dirección Residencia" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.maeEstadoCivilValor}"/>
+
+                                    <p:outputLabel value="Fecha Nacimiento" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.objeto.fechaNacimiento}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Lugar Nacimiento" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{personaBean.getUbicacionRecursiva(personaBean.objeto.gnNacimientoUbicacion.id)}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pVer2" header="Contactos" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelContactos" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaContactos" var="con" value="#{personaBean.objeto.listaUnPersonaContactos}" rowKey="#{con.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" 
+                                                 rowStyleClass="#{con.estadoRegistro == 2 ? 'fila-tachada' : null}">
+
+                                        <p:column headerText="Tipo Contacto" sortBy="#{con.maeTipoValor}">
+                                            <h:outputText value="#{con.maeTipoValor}"/>
+                                        </p:column>
+                                        <p:column headerText="Nombre" sortBy="#{con.nombre}">
+                                            <h:outputText value="#{con.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Contacto" sortBy="#{con.contacto}">
+                                            <h:outputText value="#{con.contacto}"/>
+                                        </p:column>
+                                        <p:column headerText="FH Crea" sortBy="#{con.fechaHoraCrea}">
+                                            <h:outputText value="#{con.fechaHoraCrea}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesVer" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVer').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Crear -->
+            <p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrear">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrear" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrear" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Documento" style="font-weight:bold" for="maeTipoDocumento"/>
+                                    <p:selectOneMenu id="maeTipoDocumento" label="Tipo Documento" value="#{personaBean.objeto.maeTipoDocumentoId}" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeTiposDocumento}" var="tipoDocumento" itemValue="#{tipoDocumento.id}"  itemLabel="#{tipoDocumento.nombre}" itemDescription="#{tipoDocumento.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Número Documento" style="font-weight:bold" for="documentoNumero"/>
+                                    <p:inputText id="documentoNumero" label="Número Documento" value="#{personaBean.objeto.documentoNumero}" maxlength="16"  required="false">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Primer Nombre" style="font-weight:bold" for="primerNombre"/>
+                                    <p:inputText id="primerNombre" label="Primer Nombre" value="#{personaBean.objeto.primerNombre}" style="text-transform: uppercase;" maxlength="64" required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Segundo Nombre" style="font-weight:bold" for="segundoNombre"/>
+                                    <p:inputText id="segundoNombre" label="Segundo Nombre" value="#{personaBean.objeto.segundoNombre}" style="text-transform: uppercase;" maxlength="64">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Primer Apellido" style="font-weight:bold" for="primerApellido"/>
+                                    <p:inputText id="primerApellido" label="Primer Apellido" value="#{personaBean.objeto.primerApellido}" style="text-transform: uppercase;" maxlength="64" required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Segundo Apellido" style="font-weight:bold" for="segundoApellido"/>
+                                    <p:inputText id="segundoApellido" label="Segundo Apellido" value="#{personaBean.objeto.segundoApellido}" style="text-transform: uppercase;" maxlength="64">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Género" style="font-weight:bold" for="maeSexo"/>
+                                    <p:selectOneMenu id="maeSexo" label="Tipo Documento" value="#{personaBean.objeto.maeSexoId}" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeSexo}" var="sexo" itemValue="#{sexo.id}"  itemLabel="#{sexo.nombre}" itemDescription="#{sexo.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Estado Civil" style="font-weight:bold" for="estadoCivil"/>
+                                    <p:selectOneMenu id="estadoCivil" label="Tipo Documento" value="#{personaBean.objeto.maeEstadoCivilId}">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeEstadoCivil}" var="estadoCivil" itemValue="#{estadoCivil.id}"  itemLabel="#{estadoCivil.nombre}" itemDescription="#{estadoCivil.descripcion}"/>
+                                    </p:selectOneMenu>            
+
+                                    <p:outputLabel value="Dirección Residencia" style="font-weight:bold" for="direccionResidencia"/>
+                                    <p:inputText id="direccionResidencia" label="Dirección Residencia" value="#{personaBean.objeto.direccion}" maxlength="256" required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Municipio Residencia"  style="font-weight:bold" for="direccionUbicacion"/>
+                                    <p:autoComplete id="direccionUbicacion" dropdown="false" value="#{personaBean.objeto.gnDireccionUbicacion}" completeMethod="#{personaBean.completarUbicacion}"
+                                                    var="ubica" itemLabel="#{personaBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" converter="ubicacionConverterPersona" forceSelection="true" required="true" requiredMessage="Municipio Residencia: Este campo es obligatorio"> 
+                                    </p:autoComplete>
+
+                                    <p:outputLabel value="Fecha Nacimiento"  style="font-weight:bold" for="fechaNacimiento"/>
+                                    <p:datePicker id="fechaNacimiento" label="Fecha Nacimiento" value="#{personaBean.objeto.fechaNacimiento}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+
+                                    <p:outputLabel value="Lugar Nacimiento"  style="font-weight:bold" for="nacimientoUbicacion"/>
+                                    <p:autoComplete id="nacimientoUbicacion" dropdown="false" value="#{personaBean.objeto.gnNacimientoUbicacion}" completeMethod="#{personaBean.completarUbicacion}"
+                                                    var="ubica" itemLabel="#{personaBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" converter="ubicacionConverterPersona" forceSelection="true" required="false" requiredMessage="Lugar Nacimiento: Este campo es obligatorio"> 
+                                    </p:autoComplete>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCrear2" header="Contactos" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <div align="right"> 
+                                    <p:commandButton immediate="true" action="#{personaBean.contactoCrear}" icon="ui-icon-person" title="Suscriptor"/>
+                                </div>
+                                <p:panelGrid id="panelContactos" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaContactos" var="con" value="#{personaBean.objeto.listaUnPersonaContactos}" rowKey="#{con.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" 
+                                                 rowStyleClass="#{con.estadoRegistro == 2 ? 'fila-tachada' : null}">
+
+                                        <p:column headerText="Tipo Contacto" sortBy="#{con.maeTipoValor}">
+                                            <h:outputText value="#{con.maeTipoValor}"/>
+                                        </p:column>
+                                        <p:column headerText="Nombre" sortBy="#{con.nombre}">
+                                            <h:outputText value="#{con.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Contacto" sortBy="#{con.contacto}">
+                                            <h:outputText value="#{con.contacto}"/>
+                                        </p:column>
+                                        <p:column headerText="FH Crea" sortBy="#{con.fechaHoraCrea}">
+                                            <h:outputText value="#{con.fechaHoraCrea}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </p:column>                                        
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                <h:outputText value="Acciones"/>
+                                            </f:facet>                                            
+                                            <p:commandButton title="Retirar" immediate="true" rendered="#{con.estadoRegistro == 1}" action="#{personaBean.contactoRetirar(con)}" icon="pi pi-times" class="boton-normal btn1" />
+                                            <p:commandButton title="Borrar" immediate="true" rendered="#{con.estadoRegistro == 0}" action="#{personaBean.contactoBorrar(con.id)}" icon="pi pi-trash" class="boton-normal btn1" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrear" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="guardarRemote" action ="#{personaBean.guardar}" update="panelCrear"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrear').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Editar -->
+            <p:dialog header="Editar" widgetVar="dialogoEditar" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmEditar">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Documento" style="font-weight:bold" for="maeTipoDocumento"/>
+                                    <p:selectOneMenu id="maeTipoDocumento" label="Tipo Documento" value="#{personaBean.objeto.maeTipoDocumentoId}" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeTiposDocumento}" var="tipoDocumento" itemValue="#{tipoDocumento.id}"  itemLabel="#{tipoDocumento.nombre}" itemDescription="#{tipoDocumento.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Número Documento" style="font-weight:bold" for="documentoNumero"/>
+                                    <p:inputText id="documentoNumero" label="Número Documento" value="#{personaBean.objeto.documentoNumero}" maxlength="16"  required="false">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Primer Nombre" style="font-weight:bold" for="primerNombre"/>
+                                    <p:inputText id="primerNombre" label="Primer Nombre" value="#{personaBean.objeto.primerNombre}" style="text-transform: uppercase;" maxlength="64" required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Segundo Nombre" style="font-weight:bold" for="segundoNombre"/>
+                                    <p:inputText id="segundoNombre" label="Segundo Nombre" value="#{personaBean.objeto.segundoNombre}" style="text-transform: uppercase;" maxlength="64">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Primer Apellido" style="font-weight:bold" for="primerApellido"/>
+                                    <p:inputText id="primerApellido" label="Primer Apellido" value="#{personaBean.objeto.primerApellido}" style="text-transform: uppercase;" maxlength="64" required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Segundo Apellido" style="font-weight:bold" for="segundoApellido"/>
+                                    <p:inputText id="segundoApellido" label="Segundo Apellido" value="#{personaBean.objeto.segundoApellido}" style="text-transform: uppercase;" maxlength="64">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Género" style="font-weight:bold" for="maeSexo"/>
+                                    <p:selectOneMenu id="maeSexo" label="Tipo Documento" value="#{personaBean.objeto.maeSexoId}" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeSexo}" var="sexo" itemValue="#{sexo.id}"  itemLabel="#{sexo.nombre}" itemDescription="#{sexo.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Estado Civil" style="font-weight:bold" for="estadoCivil"/>
+                                    <p:selectOneMenu id="estadoCivil" label="Tipo Documento" value="#{personaBean.objeto.maeEstadoCivilId}">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeEstadoCivil}" var="estadoCivil" itemValue="#{estadoCivil.id}"  itemLabel="#{estadoCivil.nombre}" itemDescription="#{estadoCivil.descripcion}"/>
+                                    </p:selectOneMenu>            
+
+                                    <p:outputLabel value="Dirección Residencia" style="font-weight:bold" for="direccionResidencia"/>
+                                    <p:inputText id="direccionResidencia" label="Dirección Residencia" value="#{personaBean.objeto.direccion}" maxlength="256" required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Municipio Residencia"  style="font-weight:bold" for="direccionUbicacion"/>
+                                    <p:autoComplete id="direccionUbicacion" dropdown="false" value="#{personaBean.objeto.gnDireccionUbicacion}" completeMethod="#{personaBean.completarUbicacion}"
+                                                    var="ubica" itemLabel="#{personaBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" converter="ubicacionConverterPersona" forceSelection="true" required="true" requiredMessage="Municipio Residencia: Este campo es obligatorio"> 
+                                    </p:autoComplete>
+
+                                    <p:outputLabel value="Fecha Nacimiento"  style="font-weight:bold" for="fechaNacimiento"/>
+                                    <p:datePicker id="fechaNacimiento" label="Fecha Nacimiento" value="#{personaBean.objeto.fechaNacimiento}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+
+                                    <p:outputLabel value="Lugar Nacimiento"  style="font-weight:bold" for="nacimientoUbicacion"/>
+                                    <p:autoComplete id="nacimientoUbicacion" dropdown="false" value="#{personaBean.objeto.gnNacimientoUbicacion}" completeMethod="#{personaBean.completarUbicacion}"
+                                                    var="ubica" itemLabel="#{personaBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" converter="ubicacionConverterPersona" forceSelection="true" required="false" requiredMessage="Lugar Nacimiento: Este campo es obligatorio"> 
+                                    </p:autoComplete>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pEditar2" header="Contactos" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <div align="right"> 
+                                    <p:commandButton immediate="true" action="#{personaBean.contactoCrear}" icon="ui-icon-person" title="Suscriptor"/>
+                                </div>
+                                <p:panelGrid id="panelContactos" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaContactos" var="con" value="#{personaBean.objeto.listaUnPersonaContactos}" rowKey="#{con.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" 
+                                                 rowStyleClass="#{con.estadoRegistro == 2 ? 'fila-tachada' : null}">
+
+                                        <p:column headerText="Tipo Contacto" sortBy="#{con.maeTipoValor}">
+                                            <h:outputText value="#{con.maeTipoValor}"/>
+                                        </p:column>
+                                        <p:column headerText="Nombre" sortBy="#{con.nombre}">
+                                            <h:outputText value="#{con.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Contacto" sortBy="#{con.contacto}">
+                                            <h:outputText value="#{con.contacto}"/>
+                                        </p:column>
+                                        <p:column headerText="FH Crea" sortBy="#{con.fechaHoraCrea}">
+                                            <h:outputText value="#{con.fechaHoraCrea}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </p:column>                                        
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                <h:outputText value="Acciones"/>
+                                            </f:facet>                                            
+                                            <p:commandButton title="Retirar" immediate="true" rendered="#{con.estadoRegistro == 1}" action="#{personaBean.contactoRetirar(con)}" icon="pi pi-times" class="boton-normal btn1" />
+                                            <p:commandButton title="Borrar" immediate="true" rendered="#{con.estadoRegistro == 0}" action="#{personaBean.contactoBorrar(con.id)}" icon="pi pi-trash" class="boton-normal btn1" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Modificar" type="button" class="boton btn-azul"   onclick="modificarRemote()" validateClient="true" styleClass="btn-modificar" />
+                                        <p:remoteCommand name="modificarRemote" action="#{personaBean.modificar}" update="panelEditar" />
+                                        <p:commandButton value="Cancelar" type="button" class="boton btn-rojo" onclick="PF('dialogoEditar').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Crear Contacto-->
+            <p:dialog header="Crear Contacto" widgetVar="dialogoCrearContacto" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrearContacto">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrearContacto" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrearContacto" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Contacto" style="font-weight:bold" for="maeTipoContacto"/>
+                                    <p:selectOneMenu id="maeTipoContacto" label="Tipo Contacto" value="#{personaBean.objetoContacto.maeTipoId}" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{personaBean.listaMaeTiposContacto}" var="tipoContacto" itemValue="#{tipoContacto.id}"  itemLabel="#{tipoContacto.nombre}" itemDescription="#{tipoContacto.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Nombre" style="font-weight:bold" for="nombre"/>
+                                    <p:inputText id="nombre" label="Nombre" value="#{personaBean.objetoContacto.nombre}" maxlength="156"  required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Contacto" style="font-weight:bold" for="contacto"/>
+                                    <p:inputText id="contacto" label="Contacto" value="#{personaBean.objetoContacto.contacto}" maxlength="156"  required="true">
+                                    </p:inputText>
+
+                                </p:panelGrid>
+                            </p:panel>                            
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrearContacto" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Agregar" type="button" onclick="agregarContactoRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="agregarContactoRemote" action ="#{personaBean.contactoAgregar}" update="panelCrearContacto"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrearContacto').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+        </center>
+    </ui:define>
+</ui:composition>

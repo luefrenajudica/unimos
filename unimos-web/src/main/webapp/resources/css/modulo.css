@@ -1,0 +1,413 @@
+
+
+/*---Estilos Barra superior---*/
+
+.ui-toolbar.ui-widget-header {
+    background: #f9f9f9 !important;
+    border: 1px solid #f9f9f9 !important;
+    border-radius: 0.6rem;
+}
+.ui-toolbar-group-left{
+    margin-left: 0.8rem !important;
+}
+.ui-toolbar-group-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-right: .4rem;
+}
+
+/* --- Estilos tabla --- */
+
+.tablaNueva{
+    margin-top: 10px;
+    border: 1px solid #f7f7f7;
+    background: #ffffff;
+    box-shadow: 0px 0px 29px -22px rgba(0, 0, 0, 0.73);
+    border-radius: 0.6rem;
+}
+
+.tablaNueva table>thead{
+    font-size: 0.9em;
+    /*white-space: nowrap;*/
+    color: #f1f5f8;
+}
+.tablaNueva table>thead>tr>th {
+    border: 0px !important;
+    background: #f1f5f8 !important;
+    border-radius: 0px !important;
+}
+
+.tablaNueva table>tbody{
+    border: 0px solid #f2f4f5;
+    margin: 0px;
+
+}
+
+.tablaNueva table>tbody>tr{
+    border: 0px !important;
+    background: transparent !important;
+    border-radius: 0px !important;
+    text-align: center;
+    color: #6e6f72;
+    font-size: 1em;
+    border-bottom: 1px solid #efefef !important;
+}
+
+.tablaNueva table>tbody>tr:nth-child(odd) {/* filas impares */
+    background-color: #ffffff !important;
+}
+
+.tablaNueva table>tbody>tr:nth-child(even) {/* filas pares */
+    background-color: #f8fafc !important;
+    /*background-color: #e9ebec !important;*/
+}
+
+.tablaNueva table>tbody>tr>td{
+    border: 0px !important;
+    background: transparent !important;
+    border-radius: 0px !important;
+    text-align: center;
+    color: black;
+    font-size: 1em;
+}
+
+.tablaNueva table {
+    background: #F2F4F5;
+    border-radius: 0.6rem;
+}
+
+/* --- SOLUCIÓN PARA RECUPERAR ICONOS NATIVOS --- */
+
+/* 1. Forzamos que el lápiz, el check y la X siempre tengan dimensiones */
+.tablaNueva .ui-row-editor .ui-icon {
+    display: inline-block !important;
+    visibility: visible !important;
+    text-indent: 0 !important;
+    background: none !important; /* Matamos el fondo viejo de PrimeFaces */
+    font-family: 'PrimeIcons' !important; /* Obligamos a usar la fuente nativa */
+    font-size: 0.8rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    margin: 0 4px !important;
+}
+
+/* 2. Asignamos los caracteres nativos (esto evita que el CSS 'limpio' los borre) */
+.tablaNueva .ui-row-editor .ui-icon-pencil:before { content: "\e942" !important; color: #036fab !important; }
+.tablaNueva .ui-row-editor .ui-icon-check:before { content: "\e909" !important; color: #28a745 !important; }
+.tablaNueva .ui-row-editor .ui-icon-close:before { content: "\e90b" !important; color: #dc3545 !important; }
+
+/* 3. Aseguramos que la celda de edición no colapse */
+.tablaNueva .ui-cell-editor {
+    display: block !important;
+    overflow: visible !important;
+}
+
+/*
+Estilos de botónes
+*/
+
+.boton-normal{
+    /*background: #E1E1E196 !important;*/
+    background: #D6DAE157 !important;
+    padding: 0.3rem !important;
+    box-shadow: 0px 0px 29px -22px rgb(0 0 0 / 73%) !important;
+    margin: 0.1rem;
+    min-width: 2rem;
+    min-height: 2rem !important;
+    border-radius: 10px !important;
+    border: 0.6px solid #D6DAE157 !important;
+}
+
+.btn1 > span:first-child {
+    font-size: 0.78rem;
+    padding-top: 0.1rem;
+}
+
+.boton-normal:hover{
+    background: #E9EBEC !important;
+    padding: 0.3rem !important;
+    box-shadow: 0px 0px 29px -22px rgb(0 0 0 / 73%) !important;
+    margin: 0.1rem;
+    min-width: 2rem!important;
+    border-radius: 10px !important;
+    border: 0.6px solid #D6DAE157 !important;
+}
+
+.ui-button-text-only .ui-button-text {
+    text-align: center;
+}
+.ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+    border: 1px solid #e5e2e2;
+}
+.ui-g > div {
+    border: 1px solid #e5e2e2;
+}
+.ui-panelgrid .ui-panelgrid-footer {
+    text-align: center;
+    padding: 2px 5px;
+}
+
+.boton {
+    border: 0px !important;
+    border-radius: 0.25rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    text-transform: uppercase;
+    vertical-align: bottom;
+    font-family: "Roboto", sans-serif !important;
+    font-size: 0.75rem !important;
+    font-weight: 300;
+    line-height: 1.5;
+    text-align: center;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    margin: 0.3rem;
+}
+
+button.ui-button.btn-guardar{
+    background-color: #0d6efd  !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-guardar:hover {
+    background-color: #cfe2ff !important; /* Un tono más oscuro para el hover */
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-modificar{
+    background-color: #0d6efd  !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-modificar:hover {
+    background-color: #cfe2ff !important; /* Un tono más oscuro para el hover */
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-cancelar{
+    background-color: #dc3545  !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-cancelar:hover {
+    background-color: #ff4747e0 !important; /* Un tono más oscuro para el hover */
+    color: white !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-salir{
+    background-color: #6c757d  !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button.ui-button.btn-salir:hover {
+    background-color: #5a6268 !important; /* Un tono más oscuro para el hover */
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+/*
+Configuracion dialogo como pantalla completa
+*/
+.ui-dialog.fullscreen-dialog {
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0;
+    position: fixed !important;
+}
+/*
+Configuracion dialogo
+*/
+.ui-dialog.screen-dialog {
+    width: 90% !important;
+    height: 90% !important;
+    margin: 0;
+    position: fixed !important;
+}
+
+.ui-dialog.medioscreen-dialog {
+    width: 80% !important;
+    /*height: 96% !important;*/
+    position: fixed !important;
+    /*top: 2% !important;
+    left: 2% !important;
+    margin: 0;*/
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+.ui-dialog.smallcreen-dialog {
+    width: 60% !important;
+    height: 30% !important;
+    position: fixed !important;
+    top: 35% !important;
+    left: 20% !important;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+
+
+/*
+@media screen and (max-width: 991px) {
+    // Forzamos que el diálogo ocupe el 90% de la pantalla en móviles 
+    body .ui-dialog {
+        width: 90% !important;
+        left: 5% !important;
+        top: 10% !important;
+        height: auto !important;
+    }
+
+    // Aseguramos que los botones de Modificar/Cancelar se apilen si no caben 
+    body .ui-dialog .ui-dialog-footer .ui-button {
+        width: 100% !important;
+        margin: 5px 0 !important;
+    }
+}*/
+
+/* --- Estilo para 4 columnas en el formulario --- */
+
+/* Fondo para las etiquetas (Columnas 1 y 3) */
+.grid-bicolor .col-etiqueta {
+    background-color: #f1f5f8 !important;
+    border: 1px solid #dfdfdf !important;
+    font-weight: bold;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center;
+    color: #000000;
+}
+
+/* Fondo para los campos (Columnas 2 y 4) */
+.grid-bicolor .col-campo {
+    background-color: #ffffff !important;
+    border: 1px solid #dfdfdf !important;
+    border-left: none !important; /* Quita el borde que choca con la etiqueta anterior */
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center;
+    color: #000000;
+}
+
+/* Ajuste específico para la 3ra columna (etiqueta del medio) */
+/* Para que no se vea doble borde entre el campo 1 y la etiqueta 2 */
+.grid-bicolor .ui-grid-row > div:nth-child(3) {
+    border-left: none !important;
+}
+
+/* --- AJUSTE RESPONSIVO MÓVIL (1 Sola Columna) --- */
+@media screen and (max-width: 991px) {
+    .grid-bicolor .col-etiqueta, 
+    .grid-bicolor .col-campo {
+        width: 100% !important;
+        border-left: 1px solid #dfdfdf !important; /* Recupera borde en móvil */
+        margin-bottom: 0px;
+    }
+    
+    .grid-bicolor .col-campo {
+        margin-bottom: 10px; /* Separa los bloques para legibilidad */
+    }
+}
+
+/* Asegura que el cuerpo del diálogo permita scroll si el contenido es muy largo */
+body .ui-dialog .ui-dialog-content {
+    overflow-y: auto !important;
+    padding-bottom: 20px !important; /* Espacio extra para que el botón no quede al ras */
+}
+
+/* En móviles, forzamos que el diálogo no exceda el alto de la pantalla */
+@media screen and (max-width: 991px) {
+    body .ui-dialog {
+        max-height: 90vh !important;
+        overflow: hidden !important; /* El scroll lo manejará el contenido interno */
+    }
+}
+
+
+/* AJUSTE PAGINACION*/
+
+/* 1. Base Unificada para los 4 botones */
+body .ui-paginator .ui-icon {
+    font-family: 'PrimeIcons' !important;
+    text-indent: 0 !important;
+    background: none !important; /* Matamos el sprite viejo */
+    font-size: 11px !important;   /* Tamaño pequeño y elegante */
+    color: #036fab !important;   /* Azul de SystemTech */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 2. Asignación de iconos (Gama Uniforme 'Angle') */
+body .ui-paginator .ui-icon-seek-first::before { content: "\e92d" !important; }
+body .ui-paginator .ui-icon-seek-prev::before  { content: "\e900" !important; }
+body .ui-paginator .ui-icon-seek-next::before  { content: "\e901" !important; }
+body .ui-paginator .ui-icon-seek-end::before   { content: "\e92e" !important; }
+
+/* 3. Estilo del botón (Opcional: hacerlo más limpio) */
+.ui-paginator-first, .ui-paginator-prev, .ui-paginator-next, .ui-paginator-last {
+    border-radius: 50% !important;
+    transition: background 0.2s !important;
+}
+
+.ui-paginator-first:hover, .ui-paginator-prev:hover, 
+.ui-paginator-next:hover, .ui-paginator-last:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/*
+.ui-paginator-center-content{
+    height: 45px;
+}
+.ui-paginator-center-content, .ui-paginator.ui-paginator-top .ui-paginator-top-left-content, .ui-paginator.ui-paginator-top .ui-paginator-top-right-content, .ui-paginator.ui-paginator-bottom .ui-paginator-bottom-left-content, .ui-paginator.ui-paginator-bottom .ui-paginator-bottom-right-content{
+    background-color: #e9ebec !important;
+    border-radius: 0.6rem;
+    border: none;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+*/
+
+
+.footerdialog{
+    border-top: 0px solid #eee !important;
+}
+
+.footerdialog .ui-panelgrid-footer.ui-widget-header{
+    padding-bottom: 0px !important;
+}
+
+.bodyDialogFull .footerdialog > .ui-grid,
+.bodyDialog .footerdialog > .ui-grid,
+.bodyDialog200 .footerdialog > .ui-grid,
+.bodyDialog360 .footerdialog > .ui-grid {
+    border: 0px;
+}
+
+.fila-tachada {
+    text-decoration: line-through !important;
+    color: #999999; /* Opcional: atenúa el color del texto */
+}

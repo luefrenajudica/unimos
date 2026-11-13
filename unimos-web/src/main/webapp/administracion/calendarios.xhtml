@@ -1,0 +1,522 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputScript library="js" name="schedule_es.js" />
+        <style type="text/css">
+            /* ===== ESTILOS BASE DEL CALENDARIO ===== */
+
+            /* Contenedor principal */
+            .ui-widget {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            }
+
+            /* ===== BARRA DE HERRAMIENTAS ===== */
+            .fc-header-toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem;
+                background: #ffffff;
+                border-bottom: 1px solid #dee2e6;
+                margin-bottom: 1rem;
+            }
+
+            .fc-toolbar-chunk {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            /* ===== BOTONES ===== */
+            .fc-button-group {
+                display: inline-flex;
+                gap: 0;
+                background-color: #e9ebec !important; /* el color que quieras */
+                border-radius: 0.6rem;
+                border: none; /* opcional */
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .fc-button-group .fc-button {
+                border-radius: 0;
+                margin-left: -1px;
+                                background-color: #e9ebec !important; /* el color que quieras */
+                border-radius: 0.6rem;
+                border: none; /* opcional */
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .fc-button-group .fc-button:first-child {
+                border-top-left-radius: 0.375rem;
+                border-bottom-left-radius: 0.375rem;
+                margin-left: 0;
+            }
+
+            .fc-button-group .fc-button:last-child {
+                border-top-right-radius: 0.375rem;
+                border-bottom-right-radius: 0.375rem;
+            }
+
+            .fc-button,
+            .fc-button-primary {
+                padding: 0.5rem 1rem;
+                border: 1px solid #007bff;
+                background: #007bff;
+                color: #ffffff;
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            }
+
+            .fc-button:hover:not(:disabled),
+            .fc-button-primary:hover:not(:disabled) {
+                background: #0056b3;
+                border-color: #0056b3;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .fc-button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                background: #e9ecef;
+                border-color: #dee2e6;
+                color: #6c757d;
+            }
+
+            .fc-button-active {
+                background: #0056b3 !important;
+                border-color: #004085 !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+            }
+
+            .fc-today-button {
+                border-radius: 0.375rem;
+            }
+
+            /* ===== TÍTULO DEL CALENDARIO ===== */
+            .fc-toolbar-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                color: #212529;
+            }
+
+            /* ===== TABLA DEL CALENDARIO ===== */
+            .fc-scrollgrid {
+                border: 1px solid #dee2e6;
+                border-collapse: separate;
+                border-spacing: 0;
+                border-radius: 0.375rem;
+                overflow: hidden;
+            }
+
+            .fc-scrollgrid-liquid {
+                width: 100%;
+            }
+
+            /* ===== ENCABEZADO DE DÍAS ===== */
+            .fc-col-header {
+                background: #f8f9fa;
+            }
+
+            .fc-col-header-cell {
+                padding: 0.75rem;
+                text-align: center;
+                font-weight: 600;
+                font-size: 0.875rem;
+                border-right: 1px solid #dee2e6;
+                border-bottom: 1px solid #dee2e6;
+                text-transform: uppercase;
+                letter-spacing: 0.025em;
+            }
+
+            .fc-col-header-cell:last-child {
+                border-right: none;
+            }
+
+            .fc-col-header-cell-cushion {
+                color: #495057;
+                text-decoration: none;
+            }
+
+            /* Fin de semana en encabezado */
+            .fc-day-sun .fc-col-header-cell-cushion,
+            .fc-day-sat .fc-col-header-cell-cushion {
+                color: #dc3545;
+            }
+
+            /* ===== CUERPO DEL CALENDARIO ===== */
+            .fc-scrollgrid-sync-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            /* ===== CELDAS DE DÍAS ===== */
+            .fc-daygrid-day {
+                border-right: 1px solid #dee2e6;
+                border-bottom: 1px solid #dee2e6;
+                background: #ffffff;
+                min-height: 100px;
+                transition: background-color 0.2s ease;
+            }
+
+            .fc-daygrid-day:hover {
+                background: #f8f9fa;
+            }
+
+            .fc-daygrid-day:last-child {
+                border-right: none;
+            }
+
+            .fc-daygrid-day-frame {
+                padding: 0.5rem;
+                position: relative;
+                min-height: inherit;
+            }
+
+            /* ===== NÚMERO DEL DÍA ===== */
+            .fc-daygrid-day-top {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 0.25rem;
+            }
+
+            .fc-daygrid-day-number {
+                padding: 0.25rem 0.5rem;
+                text-decoration: none;
+                color: #212529;
+                font-size: 0.875rem;
+                border-radius: 50%;
+                min-width: 1.75rem;
+                text-align: center;
+                transition: all 0.2s ease;
+            }
+
+            .fc-daygrid-day-number:hover {
+                background: #e9ecef;
+            }
+
+            /* ===== ESTADOS DE LOS DÍAS ===== */
+
+            /* Días pasados */
+            .fc-day-past {
+                background: #f8f9fa;
+            }
+
+            .fc-day-past .fc-daygrid-day-number {
+                color: #6c757d;
+            }
+
+            /* Día actual */
+            .fc-day-today {
+                background: #84adf0 !important;
+
+            }
+
+            .fc-day-today .fc-daygrid-day-number {
+                background: white;
+                color: black;
+                border: none;
+            }
+
+            /* Días futuros */
+            .fc-day-future {
+                background: #ffffff;
+            }
+
+            /* Días de otros meses */
+            .fc-day-other {
+                background: #fafafa;
+            }
+
+            .fc-day-other .fc-daygrid-day-number {
+                color: #adb5bd;
+            }
+
+            /* Fin de semana */
+            .fc-day-sun:not(.fc-day-other),
+            .fc-day-sat:not(.fc-day-other) {
+                background: #f1f3f5;
+            }
+
+            /* ===== EVENTOS ===== */
+            .fc-daygrid-day-events {
+                margin-top: 0.25rem;
+            }
+
+            .fc-daygrid-event-harness {
+                margin-bottom: 0.25rem;
+            }
+
+            .fc-daygrid-event {
+                display: flex;
+                align-items: center;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                background: #007bff;
+                color: #ffffff;
+                font-size: 0.75rem;
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+
+            .fc-daygrid-event:hover {
+                background: #0056b3;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+                transform: translateY(-1px);
+            }
+
+            /* Evento con punto (día no hábil) */
+            .fc-daygrid-dot-event {
+                background: #fff;
+                color: #212529;
+                border: 1px solid #dee2e6;
+            }
+
+            .fc-daygrid-dot-event:hover {
+                background: #f8f9fa;
+                border-color: #007bff;
+            }
+
+            .fc-daygrid-event-dot {
+                width: 0.5rem;
+                height: 0.5rem;
+                border-radius: 50%;
+                background: #dc3545;
+                margin-right: 0.5rem;
+                flex-shrink: 0;
+            }
+
+            .fc-event-time {
+                margin-right: 0.5rem;
+                font-weight: 600;
+                font-size: 0.7rem;
+            }
+
+            .fc-event-title {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-weight: 500;
+            }
+
+            /* Estados de eventos */
+            .fc-event-past .fc-daygrid-event-dot {
+                background: #6c757d;
+            }
+
+            .fc-event-future .fc-daygrid-event-dot {
+                background: #dc3545;
+            }
+
+            /* ===== INTERACTIVIDAD ===== */
+            .fc-event-draggable {
+                cursor: move;
+            }
+
+            /* ===== SCROLLER ===== */
+            .fc-scroller {
+                overflow: auto;
+                position: relative;
+            }
+
+            .fc-scroller-liquid-absolute {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+
+            /* ===== MENSAJES GROWL ===== */
+            .ui-growl-pl {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                z-index: 9999;
+            }
+
+            /* ===== ESTILOS PERSONALIZADOS PARA DÍAS NO HÁBILES ===== */
+
+            /* Marcar día no hábil con fondo especial */
+            .fc-daygrid-event-harness{
+                background: #377ff0 !important;
+
+            }
+            .fc-daygrid-day.dia-no-habil {
+                background: #377ff0 !important;
+            }
+            .fc-daygrid-dot-event{
+                background: #377ff0 !important;
+                border: none;
+            }
+
+            /* ===== AJUSTES AL SCHEDULE DE PRIMEFACES ===== */
+            #frmCalendario\:schedule {
+                width: 85vw !important;
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .ui-schedule {
+                border: none;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+
+            /* ===== RESPONSIVE ===== */
+            @media (max-width: 992px) {
+                #frmCalendario\:schedule {
+                    width: 95vw !important;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .fc-header-toolbar {
+                    flex-direction: column;
+                    gap: 0.75rem;
+                    padding: 0.75rem;
+                }
+
+                .fc-toolbar-chunk {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .fc-toolbar-title {
+                    font-size: 1.25rem;
+                }
+
+                .fc-button {
+                    padding: 0.375rem 0.75rem;
+                    font-size: 0.75rem;
+                }
+
+                .fc-daygrid-day {
+                    min-height: 70px;
+                }
+
+                .fc-daygrid-day-number {
+                    font-size: 0.75rem;
+                    padding: 0.125rem 0.375rem;
+                    min-width: 1.5rem;
+                }
+
+                .fc-col-header-cell {
+                    padding: 0.5rem 0.25rem;
+                    font-size: 0.75rem;
+                }
+
+                .fc-daygrid-event {
+                    font-size: 0.65rem;
+                    padding: 0.125rem 0.25rem;
+                }
+
+                .fc-event-title {
+                    display: none;
+                }
+
+                .fc-daygrid-event-dot {
+                    margin-right: 0;
+                }
+            }
+
+            @media (max-width: 576px) {
+                #frmCalendario\:schedule {
+                    width: 98vw !important;
+                }
+
+                .fc-header-toolbar {
+                    padding: 0.5rem;
+                }
+
+                .fc-toolbar-title {
+                    font-size: 1.1rem;
+                }
+
+                .fc-daygrid-day {
+                    min-height: 50px;
+                }
+
+                .fc-daygrid-day-frame {
+                    padding: 0.25rem;
+                }
+
+                .fc-col-header-cell {
+                    padding: 0.375rem 0.125rem;
+                    font-size: 0.7rem;
+                }
+
+                /* Solo mostrar inicial del día en móvil */
+                .fc-col-header-cell-cushion {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            /* ===== MEJORAS VISUALES ===== */
+
+            /* Animación suave al cargar */
+            .fc-view-harness {
+                animation: fadeIn 0.3s ease-in;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Sombra al hacer hover en eventos */
+            .fc-event:focus {
+                outline: 2px solid #007bff;
+                outline-offset: 2px;
+            }
+
+            /* Mejorar contraste de texto */
+            .fc-daygrid-event-dot + .fc-event-time,
+            .fc-daygrid-event-dot + .fc-event-title {
+                color: #495057;
+                font-weight: 600;
+            }
+        </style>
+        <center>
+            <p:panelGrid columnClasses="value" columns="1" style="width: 100%" >
+                <h3 style="margin-top: 0; color: #212529; font-weight: 600;">Administración de calendario días no hábiles</h3>
+                <h:form id="frmCalendario">
+                    <p:schedule id="schedule" 
+                                value="#{calendarioBean.lazyEventModel}" 
+                                initialDate="#{calendarioBean.selectedDate}" 
+                                widgetVar="myschedule" 
+                                timeZone="GMT-5"  
+                                rightHeaderTemplate="" 
+                                >
+                        <p:ajax event="dateSelect" listener="#{calendarioBean.onDateSelect}" update="@form" />
+                        <p:ajax event="eventSelect" listener="#{calendarioBean.onEventSelect}" update="@form" />
+                    </p:schedule>
+                </h:form>
+            </p:panelGrid>
+        </center>
+    </ui:define>
+</ui:composition>

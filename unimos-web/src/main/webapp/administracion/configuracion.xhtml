@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>
+        <center>
+
+            <!-- Listar -->
+            <h:form id="frmConfiguracion">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{gnConfiguracionBean.modulo.descripcion}">#{gnConfiguracionBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{gnConfiguracionBean.accionListar}" title="Refrescar" ajax="false" immediate="true" actionListener="#{gnConfiguracionBean.refrescar}" icon="pi pi-sync" class="boton-normal btn1"/>                        
+                        <p:commandButton title="Recargar Configuración" rendered="#{gnConfiguracionBean.accionCrear or gnConfiguracionBean.accionEditar}" ajax="false" immediate="true" actionListener="#{gnConfiguracionBean.refrescarConfiguracion}" icon="pi pi-plus" class="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaWidget" var="obj" value="#{gnConfiguracionBean.lazyGnConfiguracion}" rowKey="#{obj.id}"
+                             rows="#{gnConfiguracionBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" editable="true" styleClass="tablaNueva"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros" >
+                    <p:ajax event="rowEdit" listener="#{gnConfiguracionBean.modificarConfiguracion}"/>
+                    <p:column headerText="Id" sortBy="#{obj.id}" filterBy="#{obj.id}">
+                        <f:facet name="filter">
+                            <p:inputText onkeypress="
+                                    if (event.keyCode === 13) {
+                                        onchange();
+                                        return false;
+                                    }" onchange="PF('tablaWidget').filter()" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{obj.id}" title="#{obj.id}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <h:outputText value="#{obj.id}" title="#{obj.id}"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Nombre" sortBy="#{obj.nombre}" filterBy="#{obj.nombre}">
+                        <f:facet name="filter">
+                            <p:inputText onkeypress="
+                                    if (event.keyCode === 13) {
+                                        onchange();
+                                        return false;
+                                    }" onchange="PF('tablaWidget').filter()" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{obj.nombre}" title="#{obj.nombre}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{obj.nombre}" />
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Valor" sortBy="#{obj.valor}" filterBy="#{obj.valor}">
+                        <f:facet name="filter">
+                            <p:inputText onkeypress="
+                                    if (event.keyCode === 13) {
+                                        onchange();
+                                        return false;
+                                    }" onchange="PF('tablaWidget').filter()" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{obj.valor}" title="#{obj.valor}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{obj.valor}" />
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column rendered="#{gnConfiguracionBean.accionEditar}" 
+                              headerText="Opciones" 
+                              style="width: 80px; text-align: center;">
+                        <p:rowEditor />
+                    </p:column>
+                </p:dataTable>
+
+            </h:form>
+        </center>
+    </ui:define>
+</ui:composition>

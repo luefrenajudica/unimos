@@ -1,0 +1,106 @@
+/* ==========================================================================
+   DEFAULT CSS - SYSTEMTECH INTEGRAL
+   ========================================================================== */
+
+body {
+    background-color: #ffffff;
+    font-size: 13px; /* Aumentado ligeramente para mejor legibilidad */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #333333;
+    /* IMPORTANTE: Margen 0 para que el layout responsive funcione correctamente */
+    margin: 0 !important;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden; /* El scroll lo manejan los contenedores internos */
+}
+
+h1 {
+    font-family: Arial, sans-serif;
+    border-bottom: 1px solid #AFAFAF;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 15px 0;
+    padding: 5px 0;
+    color: #036fab; /* Ajustado al azul de SystemTech */
+}
+
+/* --- ENLACES GENERALES --- */
+a:link, a:visited {
+    color: #045491;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:link:hover, a:visited:hover {
+    color: #036fab;
+    text-decoration: underline;
+}
+
+/* --- COMPONENTES PRIMEFACES --- */
+
+.panelNoBorder, .panelNoBorder tr, .panelNoBorder td {
+    border: none !important;
+    border-color: transparent !important;
+}
+
+/* --- BOTONES PERSONALIZADOS --- */
+.boton-normal {
+    transition: all 0.3s ease;
+}
+
+.boton-normal:hover {
+    background-color: #4f4f4f !important;
+    color: white !important;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2) !important;
+    cursor: pointer;
+}
+
+/* --- UTILIDADES DE CARDS --- */
+.card {
+    background: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #e1e9f6;
+}
+
+/* Ajustes de Inputs para que se vean modernos */
+.ui-inputfield {
+    padding: 8px !important;
+    border-radius: 4px !important;
+}
+
+/* --- RESTAURACIÓN TOTAL DE ICONOS DEL PAGINADOR --- */
+
+/* 1. Base Unificada para los 4 botones */
+body .ui-paginator .ui-icon {
+    font-family: 'PrimeIcons' !important;
+    text-indent: 0 !important;
+    background: none !important; /* Matamos el sprite viejo */
+    font-size: 11px !important;   /* Tamaño pequeño y elegante */
+    color: #036fab !important;   /* Tu azul de SystemTech */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 2. Asignación de iconos (Gama Uniforme 'Angle') */
+body .ui-paginator .ui-icon-seek-first::before { content: "\e92d" !important; }
+body .ui-paginator .ui-icon-seek-prev::before  { content: "\e900" !important; }
+body .ui-paginator .ui-icon-seek-next::before  { content: "\e901" !important; }
+body .ui-paginator .ui-icon-seek-end::before   { content: "\e92e" !important; }
+
+/* 3. Estilo del botón (Opcional: hacerlo más limpio) */
+.ui-paginator-first, .ui-paginator-prev, .ui-paginator-next, .ui-paginator-last {
+    border-radius: 50% !important;
+    transition: background 0.2s !important;
+}
+
+.ui-paginator-first:hover, .ui-paginator-prev:hover, 
+.ui-paginator-next:hover, .ui-paginator-last:hover {
+    background-color: #f1f5f9 !important;
+}

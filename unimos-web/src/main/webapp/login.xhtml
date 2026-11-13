@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <h:outputStylesheet name="css/login.css"/>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link rel="icon" type="image/x-icon" href="/unimos/resources/images/icono.png"/>
+            <title>Unimos</title>
+        </f:facet>
+    </h:head>   
+    <p:growl id="mensajeGeneral" showSummary="false" showDetail="true" sticky="false">
+        <p:autoUpdate />
+    </p:growl>
+    <h:body>
+        <f:view>
+            <h:form id="login">                
+                <div style="bottom:10px; width:100%;" align="right">
+                    <p:commandLink onclick="PrimeFaces.monitorDownload();" immediate="true" ajax="false" title="Ayuda" rendered="#{loginBean.mostrarIcono}">
+                        <p:graphicImage value="/resources/images/ayuda.png" />
+                        <p:fileDownload value="#{loginBean.generarManual()}" />
+                    </p:commandLink>
+                </div>
+                <div class="cajaIngreso" style="position:relative; opacity: 0.95;">
+                    <div align="center">
+                        <div style="padding-top: 30px;">
+                            <h:graphicImage value="/resources/images/logo_aplicacion.png" style="width: 250px; height: auto;"/>
+                        </div>
+                        <div style="position:static; padding-top: 20px; color: #000000; font-size: 12px; width: 300px;">                            
+                            UNIMOS. Sistema de información On-Line
+                        </div>
+                        <div align="center" style="position: static; width: 300px;">
+
+                            <div style="position: relative; margin-top: 3em; ">
+                                <i class="pi pi-users icono-input iconoLogin"></i>
+                                <p:inputText id="usuario" label="Usuario" required="true" value="#{loginBean.objeto.usuario.usuario}" 
+                                             styleClass="inputLogin"
+                                             maxlength="12" placeholder="Usuario">
+                                    <f:validateLength minimum="4" maximum="12" />
+                                </p:inputText>
+                            </div>
+
+                            <div style="position: relative; margin-top: 2em;">
+                                <i class="pi pi-lock icono-contrasena iconoLogin"></i> 
+                                <p:password id="contrasena" label="Contraseña" required="true" value="#{loginBean.objeto.usuario.contrasena}" 
+                                            styleClass="inputLogin" placeholder="Contraseña"
+                                            style="width: 45%; padding-left: 35px;" maxlength="16">
+                                    <f:validateLength minimum="5" maximum="16" />
+                                </p:password>
+                            </div>
+
+                            <div style="margin-top: 2.4em;">
+                                <p:commandButton value="Ingresar" styleClass="boton-ingresar" action="#{loginBean.validarConexion}" oncomplete="sessionStorage.clear();"/>
+                            </div>
+                            <div style="margin-top: 2em;font-size: 11px;color: black !important">                                
+                                <p:commandLink action="#{loginBean.restaurarEditar}" immediate="true"  style="text-decoration: none !important; color: #074d83;"> Recordar Contraseña </p:commandLink>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position:absolute; bottom:10px; width:100%; right: 10px;">
+                    <div style="float: right; padding: 48px 10px 0 0; text-align: right; ">                        
+                        <a title="SystemTech Integral" href="http://www.systemtech.com.co/" target="_blank">
+                            <h:graphicImage value="/resources/images/logo_empresa.png" style="width: 250px; height: auto;"/>
+                        </a>
+                        <br/>
+                        <p:outputLabel value="Versión #{loginBean.moduloVersion.version} - #{loginBean.moduloVersion.fechaVersion}" styleClass="etiquetaVersion"/>
+                    </div>
+                </div>
+            </h:form>
+            <p:dialog header="Restaurar Contraseña" widgetVar="dialogoEditar" appendTo="@(body)" modal="true">
+                <h:form id="frmEditar">
+                    <h:panelGrid id="panelEditar" columns="1" style="width: 400px; text-align: center;">
+                        <h:panelGroup style="margin-top: 40px;">&nbsp;</h:panelGroup>
+                        <!--<h:graphicImage value="/resources/images/logo_aplicacion_metro_3.png" style="width: 250px; height: auto;"/>-->
+                        <h:graphicImage value="/resources/images/logo_aplicacion.png" style="width: 250px; height: auto;"/>
+                        <h:panelGroup style="margin-top: 40px;">&nbsp;</h:panelGroup>
+                        <p:outputLabel value="Ingrese el Usuario para Restablecer Contraseña"/>
+                        <h:panelGroup>
+                            <h:graphicImage value="/resources/images/ico_usuario.png" title="Usuario"/>
+                            <p:inputText id="usuarioEmail" label="Usuario" required="true" value="#{loginBean.objeto.usuario.usuario}" style="width: 130px; margin-left: 10px;" maxlength="16">
+                                <f:validateLength minimum="1" maximum="16" />
+                            </p:inputText>
+                        </h:panelGroup>
+                        <h:panelGroup style="margin-top: 40px;">&nbsp;</h:panelGroup>
+                        <f:facet name="footer">
+                            <p:commandButton value="Restaurar" type="button" validateClient="true" onclick="restaurarRemote()"/>
+                            <p:remoteCommand name="restaurarRemote" update="panelEditar" action="#{loginBean.restaurarModificar}" />
+                            <p:commandButton style="margin-left: 10px;" value="Cancelar" type="button" onclick="PF('dialogoEditar').hide();"/>
+                        </f:facet>
+                        <h:panelGroup style="margin-bottom: 40px;">&nbsp;</h:panelGroup>
+                    </h:panelGrid>
+                </h:form>
+            </p:dialog>          
+        </f:view>
+    </h:body>
+</html>
+

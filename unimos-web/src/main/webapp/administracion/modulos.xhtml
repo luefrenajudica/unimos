@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>
+        <center>
+
+            <!-- Listar -->
+            <h:form id="frmModulos">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{moduloBean.modulo.descripcion}">#{moduloBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{moduloBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{moduloBean.refrescar()}" icon="pi pi-sync" class="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+
+                <p:treeTable id="tablaListaModulo" var="obj" value="#{moduloBean.raizArbol}" 
+                             styleClass="tablaNueva" style="text-align: left;"
+                             widgetVar="tablaWidget" resizableColumns="true" >
+
+                    <p:column headerText="Nombre" style="text-align: left;">
+                        <p:commandButton type="button" icon="#{obj.icono}" title="#{obj.icono}" rendered="#{obj.icono != ''}" styleClass="boton-normal btn1"/>
+                        <h:outputText title="#{obj.descripcionCorta}" value="#{obj.nombre}"/>                        
+                    </p:column>
+                    <p:column headerText="Tipo">
+                        <h:outputText value="#{obj.tipoStr}"/>
+                    </p:column>
+                    <p:column headerText="Activo">
+                        <h:outputText value="#{obj.activoStr}"/>
+                    </p:column>
+                    <p:column headerText="Orden">
+                        <h:outputText value="#{obj.orden}"/>
+                    </p:column>
+                    <p:column headerText="Privilegios">
+                        <h:outputText title="#{obj.privilegiosStr}" value="#{obj.privilegiosStr}"/>
+                    </p:column>
+
+                    <p:column style="text-align: center;" headerText="Acciones">
+                        <h:panelGroup layout="block" style="display:flex; justify-content:center; gap:4px; flex-wrap:wrap;">                            
+                            <p:commandButton title="Editar" actionListener="#{moduloBean.editar(obj.id)}" icon="pi pi-pencil"  styleClass="boton-normal btn1"/>
+                            <p:commandButton title="Versión" rendered="#{moduloBean.accionAdicional1 and obj.tipo == 'A'.charAt(0)}" actionListener="#{moduloBean.crearVersion(obj.id)}" icon="pi pi-tag" styleClass="boton-normal btn1" />
+                            <p:commandButton title="Manual" rendered="#{moduloBean.accionAdicional2 and obj.tipo != 'M'.charAt(0)}" actionListener="#{moduloBean.crearManual(obj.id, obj.nombre)}" icon="pi pi-bookmark" styleClass="boton-normal btn1"/>
+                            <p:commandButton id="auditoria" action="#{moduloBean.getAuditoria(obj.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" styleClass="boton-normal btn1"/>
+                        </h:panelGroup>
+                    </p:column>
+                </p:treeTable>
+            </h:form>
+
+            <!-- Editar -->
+            <p:dialog header="Editar" widgetVar="dialogoEditar" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form class="frmAuditoria" style="text-align: right;">
+                        <p:commandButton id="auditoria" class="boton-normal btn1" action="#{moduloBean.getAuditoria(moduloBean.objeto.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" />
+                    </h:form>
+                    <h:form id="frmEditar">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Padre" for="padre" />
+                                    <p:selectOneMenu id="padre" label="Padre" value="#{moduloBean.objeto.moduloPadre.id}" editable="fase" required="true" rendered="#{moduloBean.objeto.moduloPadre != null}">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{moduloBean.modulosPadres}" var="pad" itemValue="#{pad.id}" itemLabel="#{pad.nombre} (#{pad.tipoStr})" itemDescription="#{pad.descripcion}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="SIN PADRE" rendered="#{moduloBean.objeto.moduloPadre == null}"/>
+                                    <p:outputLabel value="Nombre" for="nombre" />
+                                    <p:inputText id="nombre" label="Nombre" size="50" value="#{moduloBean.objeto.nombre}" maxlength="32" required="true"/>
+                                    <p:outputLabel value="Icono" for="icono" style="font-weight:bold" />
+                                    <p:inputText id="icono" label="Icono" size="50" value="#{moduloBean.objeto.icono}" maxlength="32" disabled="#{moduloBean.objeto.tipo != 'O'.charAt(0)}" required="false"/>
+                                    <p:outputLabel value="Activo" for="activo" />
+                                    <p:selectOneRadio id="activo" value="#{moduloBean.objeto.activo}">
+                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                    </p:selectOneRadio>
+                                    <p:outputLabel value="Descripcion" for="descripcion" />
+                                    <p:inputTextarea id="descripcion" label="Descripción" value="#{moduloBean.objeto.descripcion}" cols="50" maxlength="512" />
+                                    <p:outputLabel value="Orden" for="orden" />
+                                    <p:inputNumber id="orden" label="Orden" value="#{moduloBean.objeto.orden}" minValue="1" maxValue="9" maxlength="1" decimalPlaces="0" required="true">
+                                        <f:validateDoubleRange minimum="1" maximum="9" />
+                                    </p:inputNumber>
+                                    <p:outputLabel value="Privilegios" />
+                                    <p:outputLabel value="#{moduloBean.objeto.privilegiosStr}"/>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Modificar" type="button" onclick="modificarRemote()" validateClient="true" styleClass="btn-modificar" />
+                                        <p:remoteCommand name="modificarRemote" action="#{moduloBean.modificar}" update="panelEditar" />
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoEditar').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Versiones -->
+            <p:dialog header="Versiones" widgetVar="dialogoVersion" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmVersion">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Versión" for="version" style="font-weight:bold"/>
+                                    <p:inputText value="#{moduloBean.objetoModVer.version}" id="version" label="Versión" required="true" maxlength="8" style="width:99%"/>
+                                    <p:outputLabel value="Fecha" for="fecha" style="font-weight:bold"/>
+                                    <p:calendar value="#{moduloBean.objetoModVer.fechaVersion}" 
+                                                id="fecha" label="Fecha" navigator="true" required="true"
+                                                pattern="yyyy-MM-dd" yearRange="c-100:c" size="20" maxlength="10" >
+                                    </p:calendar>
+                                    <p:outputLabel value="Descripción" for="descripcion" style="font-weight:bold"/>
+                                    <p:inputText value="#{moduloBean.objetoModVer.descripcion}" id="descripcion" required="true" maxlength="1024" style="width: 99%;"/>
+                                    <p:commandButton title="Crear Versión" actionListener="#{moduloBean.guardarVersion()}" icon="ui-icon-plus" update="frmVersion" style=" width: 99%">
+                                        <p:confirm header="Confirmación" message="¿Está seguro que desea crear la versión?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                            </p:confirmDialog>
+                            <p:panel id="pnlListar" header="Listar" style="margin-bottom:10px;" toggleable="true">
+                                <p:dataTable var="objModVer" value="#{moduloBean.lazyModuloVersion}" paginator="true" rows="#{moduloBean.tamanoPagina}" 
+                                             emptyMessage="No se encontraron registros"
+                                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,30,50,100" id="tablaRegistros" lazy="true"
+                                             widgetVar="tablaWidgetModVer" reflow="true"
+                                             rowKey="#{obj.id}">
+                                    <p:column headerText="Versión" sortBy="#{objModVer.version}" filterBy="#{objModVer.version}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Usuario" onchange="PF('tablaWidgetModVer').filter()"/>
+                                        </f:facet>
+                                        <h:outputText value="#{objModVer.version}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha" sortBy="#{objModVer.fechaVersion}">
+                                        <h:outputText value="#{objModVer.fechaVersion}"/>
+                                    </p:column>
+                                    <p:column headerText="Usuario" sortBy="#{objModVer.usuarioCrea}" filterBy="#{objModVer.usuarioCrea}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Usuario" onchange="PF('tablaWidgetModVer').filter()"/>
+                                        </f:facet>
+                                        <h:outputText value="#{objModVer.usuarioCrea}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha Hora Creación" sortBy="#{objModVer.fechaHoraCrea}">
+                                        <h:outputText value="#{objModVer.fechaHoraCrea}"/>
+                                    </p:column>
+                                    <p:column headerText="Descripción" sortBy="#{objModVer.descripcion}" filterBy="#{objModVer.descripcion}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Descripción" onchange="PF('tablaWidgetModVer').filter()"/>
+                                        </f:facet>
+                                        <h:outputText value="#{objModVer.descripcion}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVersion').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Manuales -->
+            <p:dialog header="Manuales" widgetVar="dialogoManual" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmManual">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pManual" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrearManual" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Versión" style="font-weight:bold" for="version"/>    
+                                    <p:inputText value="#{moduloBean.objetoModMan.version}" id="version" required="true" maxlength="8" style="width:99%"/>
+                                    <p:outputLabel value="Fecha Versión" style="font-weight:bold" for="fecha"/>
+                                    <p:calendar value="#{moduloBean.objetoModMan.fechaVersion}" id="fecha" label="fecha" navigator="true" pattern="yyyy-MM-dd" yearRange="c-100:c" maxlength="10" required="true">
+                                    </p:calendar>
+                                    <p:outputLabel value="Versión Actual" style="font-weight:bold" for="actual"/>
+                                    <p:selectBooleanCheckbox id="actual" label="actual" value="#{moduloBean.objetoModMan.actual}" disabled="true"/>
+                                    <p:outputLabel value="Descripción" style="font-weight:bold" for="descripcion"/>
+                                    <p:inputText value="#{moduloBean.objetoModMan.descripcion}" id="descripcion" maxlength="124" style="width: 99%;"/>
+                                    <p:outputLabel value="Versión" style="font-weight:bold" for="version"/>
+                                    <p:fileUpload id="adjuntomanual" label="Adjunto Manual" mode="simple" skinSimple="true" value="#{moduloBean.archivoManual}" listener="#{moduloBean.cargarArchivoDocumento}" multiple="false" auto="true" uploadLabel="Subir" cancelLabel="Cancelar" widgetVar="subirManual" update="lblManual cmdManual" required="true">
+                                        <p:validateFile sizeLimit="5000000" allowTypes="/(\.|\/)(pdf|PDF)$/" />
+                                    </p:fileUpload>
+                                    <p:outputLabel id="lblManual" style="font-weight:bold" styleClass="texto-adjuntos" value="#{moduloBean.nombreDocumento}"/>
+                                    <p:spacer width="10" height="0"/>
+                                    <p:commandButton id="cmdManual" icon="ui-icon-close" action="#{moduloBean.borrarArchivo()}" immediate="true"
+                                                     style="#{moduloBean.mostrarBorrarDocumento ?  'display: initial;' : 'display: none;'} width: 30px"
+                                                     update="lblManual cmdManual"/>
+                                    <p:commandButton title="Crear Manual" actionListener="#{moduloBean.guardarManual()}" icon="ui-icon-plus" update="frmManual" style="width: 99%;"/>
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pnlListar" header="Listar" style="margin-bottom:10px;" toggleable="true">
+                                <p:dataTable var="objModMan" value="#{moduloBean.lazyManual}" paginator="true" rows="#{moduloBean.tamanoPagina}" 
+                                             emptyMessage="No se encontraron registros"
+                                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,30,50,100" id="tablaRegistros" lazy="true"
+                                             widgetVar="tablaWidgetModVer"
+                                             rowKey="#{obj.id}" reflow="true">
+                                    <p:column headerText="Nombre" sortBy="#{objModMan.nombre}" filterBy="#{objModMan.nombre}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Nombre" style="width: 90%;" onchange="PF('objModMan').filter()"/>
+                                        </f:facet>
+                                        <h:outputText title="#{objModMan.nombre}" value="#{objModMan.nombre}"/>
+                                    </p:column>
+                                    <p:column headerText="Descripción" sortBy="#{objModMan.descripcion}" filterBy="#{objModMan.descripcion}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Descripción" style="width: 90%;" onchange="PF('objModMan').filter()"/>
+                                        </f:facet>
+                                        <h:outputText title="#{objModMan.descripcion}" value="#{objModMan.descripcion}"/>
+                                    </p:column>
+                                    <p:column headerText="Versión" sortBy="#{objModMan.version}" filterBy="#{objModMan.version}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Version" style="width: 90%;" onchange="PF('objModMan').filter()"/>
+                                        </f:facet>
+                                        <h:outputText value="#{objModMan.version}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha" sortBy="#{objModMan.fechaVersion}">
+                                        <h:outputText value="#{objModMan.fechaVersion}"/>
+                                    </p:column>
+                                    <p:column headerText="Ruta" sortBy="#{objModMan.ruta}" filterBy="#{objModMan.ruta}" rendered="false">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Ruta" style="width: 90%;" onchange="PF('objModMan').filter()"/>
+                                        </f:facet>
+                                        <h:outputText title="#{objModMan.ruta}" value="#{objModMan.ruta}"/>
+                                    </p:column>
+                                    <p:column headerText="Archivo" sortBy="#{objModMan.archivo}" filterBy="#{objModMan.archivo}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Archivo" style="width: 90%;" onchange="PF('objModMan').filter()"/>
+                                        </f:facet>
+                                        <h:outputText title="#{objModMan.archivo}" value="#{objModMan.archivo}"/>
+                                    </p:column>
+                                    <p:column headerText="Usuario" sortBy="#{objModMan.usuarioCrea}" filterBy="#{objModMan.usuarioCrea}">
+                                        <f:facet name="filter">
+                                            <p:inputText label="Usuario Crea" style="width: 90%;" onchange="PF('objModMan').filter()"/>
+                                        </f:facet>
+                                        <h:outputText value="#{objModMan.usuarioCrea}"/>
+                                    </p:column>
+                                    <p:column headerText="Fecha Hora Creación" sortBy="#{objModMan.fechaHoraCrea}">
+                                        <h:outputText value="#{objModMan.fechaHoraCrea}">
+                                            <f:convertDateTime type="date" pattern="yyyy-MM-dd HH:mm:ss" timeZone="America/Bogota"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Versión Actual">
+                                        <p:selectBooleanCheckbox value="#{objModMan.actual}">
+                                            <p:ajax event="change" listener="#{moduloBean.modificarManualActual(objModMan)}"/>
+                                        </p:selectBooleanCheckbox>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoManual').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+        </center>
+    </ui:define>
+</ui:composition>

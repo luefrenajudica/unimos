@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <!--SERVICES-->
+    <bean id="conexionServicio" class="co.com.systemtech.unimos.web.administracion.servicio.ConexionServicioImpl">
+    </bean>
+    <bean id="empresaServicio" class="co.com.systemtech.unimos.web.administracion.servicio.EmpresaServicioImpl">
+    </bean>
+    <bean id="logServicio" class="co.com.systemtech.unimos.web.administracion.servicio.LogServicioImpl">
+    </bean>
+    <bean id="maestroTipoServicio" class="co.com.systemtech.unimos.web.administracion.servicio.MaestroTipoServicioImpl">
+    </bean>
+    <bean id="maestroServicio" class="co.com.systemtech.unimos.web.administracion.servicio.MaestroServicioImpl">
+    </bean>
+    <bean id="moduloServicio" class="co.com.systemtech.unimos.web.administracion.servicio.ModuloServicioImpl">
+    </bean>
+    <bean id="perfilServicio" class="co.com.systemtech.unimos.web.administracion.servicio.PerfilServicioImpl">
+    </bean>
+    <bean id="ubicacionServicio" class="co.com.systemtech.unimos.web.administracion.servicio.UbicacionServicioImpl">
+    </bean>
+    <bean id="usuarioServicio" class="co.com.systemtech.unimos.web.administracion.servicio.UsuarioServicioImpl">
+    </bean>
+    <bean id="calendarioServicio" class="co.com.systemtech.unimos.web.administracion.servicio.CalendarioServicioImpl">
+    </bean>        
+    <bean id="rolServicio" class="co.com.systemtech.unimos.web.administracion.servicio.RolServicioImpl">
+    </bean>
+    <bean id="gnConfiguracionServicio" class="co.com.systemtech.unimos.web.administracion.servicio.GnConfiguracionServicioImpl">
+    </bean>
+    
+    
+    <bean id="entidadServicio" class="co.com.systemtech.unimos.web.registro.servicio.EntidadServicioImpl">
+    </bean>
+    <bean id="sedeServicio" class="co.com.systemtech.unimos.web.registro.servicio.SedeServicioImpl">
+    </bean>
+    <bean id="tecnologiaServicio" class="co.com.systemtech.unimos.web.registro.servicio.TecnologiaServicioImpl">
+    </bean>
+    <bean id="personaServicio" class="co.com.systemtech.unimos.web.registro.servicio.PersonaServicioImpl">
+    </bean>
+    <bean id="comercialServicio" class="co.com.systemtech.unimos.web.registro.servicio.ComercialServicioImpl">
+    </bean>
+    
+    <bean id="contratoServicio" class="co.com.systemtech.unimos.web.contrato.servicio.ContratoServicioImpl">
+    </bean>
+    <bean id="suscripcionServicio" class="co.com.systemtech.unimos.web.contrato.servicio.SuscripcionServicioImpl">
+    </bean>
+    
+    <bean id="fidelizacionServicio" class="co.com.systemtech.unimos.web.gestion.servicio.FidelizacionServicioImpl">
+    </bean>
+
+</beans>

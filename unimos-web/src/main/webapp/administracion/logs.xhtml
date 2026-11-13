@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>
+        <center>
+            <h:form id="frmLogs">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{logBean.modulo.descripcion}">#{logBean.modulo.nombre}</span>
+                        <p:spacer width="30"/>                        
+                        <p:outputLabel value="Desde"/>
+                        <p:spacer width="5"/>
+                        <p:calendar id="fInicial" value="#{logBean.fechaInicio}" pattern="yyyy-MM-dd HH:mm">
+                            <p:ajax event="dateSelect" update="tablaRegistros"/>
+                        </p:calendar>
+                        <p:spacer width="10"/>                        
+                        <p:outputLabel value="Hasta" />
+                        <p:spacer width="5"/>
+                        <p:calendar id="fFinal" value="#{logBean.fechaFin}" pattern="yyyy-MM-dd HH:mm">
+                            <p:ajax event="dateSelect" update="tablaRegistros"/>
+                        </p:calendar>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{logBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{logBean.refrescar()}" icon="pi pi-sync " styleClass="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaWidget" var="obj" value="#{logBean.lazyLog}" rowKey="#{obj.id}"
+                             rows="#{logBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros">
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>
+                        <p:commandButton rendered="#{logBean.accionVer}" title="Ver" actionListener="#{logBean.ver(obj.id)}" icon="pi pi-search" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{logBean.accionBorrar}" title="Borrar" action="#{logBean.borrar(obj.id)}" icon="pi pi-trash" class="boton-normal btn1">
+                            <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Usuario" sortBy="#{obj.usuarioUsuario}" filterBy="#{obj.usuarioUsuario}" filterMatchMode="contains">
+                        <f:facet name="filter">
+                            <p:inputText style="width: 90%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.usuarioUsuario}"/>
+                    </p:column>
+                    <p:column headerText="Nombre" filterMatchMode="contains">
+                        <h:outputText value="#{obj.usuarioNombre}"/>
+                    </p:column>
+                    <p:column headerText="Módulo" sortBy="#{obj.modulo}" filterBy="#{obj.modulo}">
+                        <f:facet name="filter">
+                            <p:inputText style="width: 90%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.modulo}"/>
+                    </p:column>
+                    <p:column headerText="Opción" sortBy="#{obj.opcion}" filterBy="#{obj.opcion}">
+                        <f:facet name="filter">
+                            <p:inputText style="width: 90%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.opcion}"/>
+                    </p:column>
+                    <p:column headerText="Accion" sortBy="#{obj.accion}" filterBy="#{obj.accion}">
+                        <f:facet name="filter">
+                            <p:inputText style="width: 90%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.accion}"/>
+                    </p:column>
+                    <p:column headerText="Empresa" sortBy="#{obj.empresaEjecucion}" filterBy="#{obj.empresaEjecucion}" filterMatchMode="contains">
+                        <f:facet name="filter">
+                            <p:inputText style="width: 90%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.empresaEjecucion}"/>
+                    </p:column>
+                    <p:column headerText="Fecha Hora" sortBy="#{obj.fechaHora}">                        
+                        <h:outputText value="#{obj.fechaHora}">
+                            <f:convertDateTime type="date" pattern="yyyy-MM-dd HH:mm:ss" timeZone="America/Bogota"/>
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <!-- Ver -->
+            <p:dialog header="Ver" widgetVar="dialogoVer" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmVer">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pVer" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelVer" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor"
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+                                    <p:outputLabel value="Usuario" />
+                                    <p:outputLabel value="#{logBean.objeto.usuarioUsuario}"/>
+                                    <p:outputLabel value="Nombre Usuario" />
+                                    <p:outputLabel value="#{logBean.objeto.usuarioNombre}"/>                        
+                                    <p:outputLabel value="Empresa Ejecucion" />
+                                    <p:outputLabel value="#{logBean.objeto.empresaEjecucion}"/>
+                                    <p:outputLabel value="Empresa Usuario" />
+                                    <p:outputLabel value="#{logBean.objeto.empresaUsuario}"/>                        
+                                    <p:outputLabel value="Módulo" />
+                                    <p:outputLabel value="#{logBean.objeto.modulo}" />
+                                    <p:outputLabel value="Opción" />
+                                    <p:outputLabel value="#{logBean.objeto.opcion}" />
+                                    <p:outputLabel value="Acción" />
+                                    <p:outputLabel value="#{logBean.objeto.accion}" />
+                                    <p:outputLabel value="Fecha Hora" />
+                                    <p:outputLabel value="#{logBean.objeto.fechaHora}">
+                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd HH:mm:ss" timeZone="America/Bogota"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="IP Pública" />
+                                    <p:outputLabel value="#{logBean.objeto.ipPublica}" />
+                                    <p:outputLabel value="IP Privada" />
+                                    <p:outputLabel value="#{logBean.objeto.ipPrivada}" />
+                                    <p:outputLabel value="Descripción" />
+                                    <p:outputLabel value="#{logBean.objeto.descripcion}" style="width:100%; display:block;"/>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesVer" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVer').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+            
+        </center>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>        
+        <center>
+
+            <h:form id="frmSedes">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{sedeBean.modulo.descripcion}">#{sedeBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{sedeBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{sedeBean.refrescar}" icon="pi pi-sync " class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{sedeBean.accionCrear}" title="Crear" actionListener="#{sedeBean.crear}" icon="pi pi-file-o" class="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaWidget" var="obj" value="#{sedeBean.lazySede}" rowKey="#{obj.id}"
+                             rows="#{sedeBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros" >
+
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>    
+                        <p:commandButton rendered="#{sedeBean.accionVer}" title="Ver" actionListener="#{sedeBean.ver(obj.id)}" icon="pi pi-search"/>
+                        <p:commandButton rendered="#{sedeBean.accionEditar}" title="Editar" actionListener="#{sedeBean.editar(obj.id)}" icon="pi pi-pencil" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{sedeBean.accionBorrar}" title="Borrar" action="#{sedeBean.borrar(obj.id)}" icon="pi pi-trash" class="boton-normal btn1">
+                            <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>                    
+                    <p:column headerText="Nombre" sortBy="#{obj.nombre}" filterBy="#{obj.nombre}">
+                        <f:facet name="filter">
+                            <p:inputText label="Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Descripción" >
+                        <h:outputText title="#{obj.descripcion}" value="#{obj.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Cod. Habilitación" >
+                        <h:outputText title="#{obj.codigoHabilitacion}" value="#{obj.codigoHabilitacion}"/>
+                    </p:column>
+                    <p:column headerText="Ubicación" filterBy="#{obj.ubicacion.id}">
+                        <f:facet name="filter">
+                            <p:autoComplete onchange="PF('tablaWidget').filter()" dropdown="false" completeMethod="#{sedeBean.completarUbicacion}"
+                                            var="ubica" itemLabel="#{sedeBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" forceSelection="true" style="width: 95%;"> 
+                            </p:autoComplete>
+                        </f:facet>
+                        <h:outputText value="#{sedeBean.getUbicacionRecursiva(obj.ubicacion.id)}"/>
+                    </p:column>
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <!-- Ver -->
+            <p:dialog header="Ver" widgetVar="dialogoVer" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form class="frmAuditoria" style="text-align: right;">
+                        <p:commandButton id="auditoria" class="boton-normal btn1" action="#{sedeBean.getAuditoria(sedeBean.objeto.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" />
+                    </h:form>
+                    <h:form id="frmVer">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pVer" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelVer" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor"
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+                                    <p:outputLabel value="Nombre" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{sedeBean.objeto.nombre}"/>
+                                    <p:outputLabel value="Descripción" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{sedeBean.objeto.descripcion}"/>
+                                    <p:outputLabel value="Cod. Habilitación" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{sedeBean.objeto.codigoHabilitacion}"/>
+                                    <p:outputLabel value="Ubicacion" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{sedeBean.getUbicacionRecursiva(sedeBean.objeto.ubicacion.id)}"/>
+                                    <p:outputLabel value="Dirección" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{sedeBean.objeto.direccion}"/>
+                                    <p:outputLabel value="Teléfono" style="font-weight:bold"/>
+                                    <p:outputLabel value="#{sedeBean.objeto.telefono}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesVer" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVer').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Crear -->
+            <!--<p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true" width="80%">-->
+            <p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrear">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrear" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrear" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Nombre" style="font-weight:bold" for="nombre"/>
+                                    <p:inputText id="nombre" label="Nombre" value="#{sedeBean.objeto.nombre}" maxlength="64"  required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Descripción" style="font-weight:bold" for="descripcion"/>
+                                    <p:inputTextarea id="descripcion" label="Descripción" value="#{sedeBean.objeto.descripcion}" cols="50" maxlength="512"/>
+
+                                    <p:outputLabel value="Código Habilitación"  style="font-weight:bold" for="codigoHabilitacion"/>
+                                    <p:inputText id="codigoHabilitacion" label="Cód.Habilitación" value="#{sedeBean.objeto.codigoHabilitacion}" size="13" maxlength="13" style="width: 99%"/>
+
+                                    <p:outputLabel value="Ubicación"  style="font-weight:bold" for="ubicacion"/>
+                                    <p:autoComplete id="ubicacion" dropdown="false" value="#{sedeBean.objeto.ubicacion}" completeMethod="#{sedeBean.completarUbicacion}"
+                                                    var="ubica" itemLabel="#{sedeBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" converter="ubicacionConverterSede" forceSelection="true" size="50" required="true" requiredMessage="Ubicacion: Este campo es obligatorio"> 
+                                    </p:autoComplete>
+
+                                    <p:outputLabel value="Dirección"  style="font-weight:bold" for="direccion"/>
+                                    <p:inputText id="direccion" label="Dirección" value="#{sedeBean.objeto.direccion}" maxlength="256"  required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Teléfono" style="font-weight:bold" for="telefono"/>
+                                    <p:inputMask id="telefono" label="Teléfono" value="#{sedeBean.objeto.telefono}" mask="(999) 999-9999" required="true"/>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrear" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="guardarRemote" action ="#{sedeBean.guardar}" update="panelCrear"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrear').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Editar -->
+            <p:dialog header="Editar" widgetVar="dialogoEditar" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmEditar">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Nombre" style="font-weight:bold" for="nombre"/>
+                                    <p:inputText id="nombre" label="Nombre" value="#{sedeBean.objeto.nombre}" maxlength="64"  required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Descripción" style="font-weight:bold" for="descripcion"/>
+                                    <p:inputTextarea id="descripcion" label="Descripción" value="#{sedeBean.objeto.descripcion}" cols="50" maxlength="512"/>
+                                    
+                                    <p:outputLabel value="Cod. Habilitación" style="font-weight:bold" for="codigoHabilitacion"/>
+                                    <p:inputText id="codigoHabilitacion" label="Cód.Habilitación" value="#{sedeBean.objeto.codigoHabilitacion}" size="13" maxlength="13" style="width: 99%"/>
+
+                                    <p:outputLabel value="Ubicación"  style="font-weight:bold" for="ubicacion"/>
+                                    <p:autoComplete id="ubicacion" dropdown="false" value="#{sedeBean.objeto.ubicacion}" completeMethod="#{sedeBean.completarUbicacion}"
+                                                    var="ubica" itemLabel="#{sedeBean.getUbicacionRecursiva(ubica.id)}" itemValue="#{ubica}" converter="ubicacionConverterSede" forceSelection="true" size="50" required="true" requiredMessage="Ubicacion: Este campo es obligatorio"> 
+                                    </p:autoComplete>
+
+                                    <p:outputLabel value="Dirección"  style="font-weight:bold" for="direccion"/>
+                                    <p:inputText id="direccion" label="Dirección" value="#{sedeBean.objeto.direccion}" maxlength="256"  required="true">
+                                    </p:inputText>
+
+                                    <p:outputLabel value="Teléfono" style="font-weight:bold" for="telefono"/>
+                                    <p:inputMask id="telefono" label="Teléfono" value="#{sedeBean.objeto.telefono}" mask="(999) 999-9999" required="true"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Modificar" type="button" class="boton btn-azul"   onclick="modificarRemote()" validateClient="true" styleClass="btn-modificar" />
+                                        <p:remoteCommand name="modificarRemote" action="#{sedeBean.modificar}" update="panelEditar" />
+                                        <p:commandButton value="Cancelar" type="button" class="boton btn-rojo" onclick="PF('dialogoEditar').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+        </center>
+    </ui:define>
+</ui:composition>

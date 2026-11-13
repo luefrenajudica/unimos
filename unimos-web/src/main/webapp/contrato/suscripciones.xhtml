@@ -1,0 +1,830 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>        
+        <center>
+
+            <!-- Listar -->
+            <h:form id="frmSuscripciones">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{suscripcionBean.modulo.descripcion}">#{suscripcionBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{suscripcionBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{suscripcionBean.refrescar}" icon="pi pi-sync " styleClass="boton-normal btn1"/>
+                        <p:commandButton rendered="#{suscripcionBean.accionCrear}" title="Crear" actionListener="#{suscripcionBean.crear}" icon="pi pi-file-o" styleClass="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaRegistrosWidget" var="obj" value="#{suscripcionBean.lazyRegistros}" rowKey="#{obj.id}"
+                             rows="#{suscripcionBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros" >
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>    
+                        <p:commandButton rendered="#{suscripcionBean.accionVer}" title="Ver" actionListener="#{suscripcionBean.ver(obj.id)}" icon="pi pi-search" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{suscripcionBean.accionEditar}" title="Editar" actionListener="#{suscripcionBean.editar(obj.id)}" icon="pi pi-pencil" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{suscripcionBean.accionBorrar}" title="Borrar" action="#{suscripcionBean.borrar(obj.id)}" icon="pi pi-trash" class="boton-normal btn1">
+                            <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                        <p:commandButton rendered="#{suscripcionBean.accionAdicional2}" title="Cartera" actionListener="#{suscripcionBean.verCartera(obj.id)}" icon="pi pi-dollar" class="boton-normal btn1"/>
+                        
+                    </p:column>
+                    
+                    <p:column headerText="ID" sortBy="#{obj.id}" filterBy="#{obj.id}">
+                        <f:facet name="filter">
+                            <p:inputText label="ID" maxlength="11" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Tipo" sortBy="#{obj.maeTipoValor}" filterBy="#{obj.maeTipoId}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaRegistrosWidget').filter()" style="width: 99%">
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{suscripcionBean.listaMaeTiposSuscripcion}" var="tipo" itemValue="#{tipo.id}"  itemLabel="#{tipo.nombre}" itemDescription="#{tipo.descripcion}"   />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{obj.maeTipoValor}"/>
+                    </p:column>
+
+                    <p:column headerText="Plan" sortBy="#{obj.maePlanValor}" filterBy="#{obj.maePlanId}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaRegistrosWidget').filter()" style="width: 99%">
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{suscripcionBean.listaMaePlanes}" var="plan" itemValue="#{plan.id}"  itemLabel="#{plan.nombre}" itemDescription="#{plan.descripcion}"   />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{obj.maePlanValor}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha Inicio" sortBy="#{obj.fechaInicio}">
+                        <h:outputText value="#{obj.fechaInicio}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha Fin" sortBy="#{obj.fechaFin}">
+                        <h:outputText value="#{obj.fechaFin}"/>
+                    </p:column>
+
+                    <p:column headerText="Sede" filterBy="#{obj.sede.id}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaRegistrosWidget').filter()" style="width: 99%">
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{suscripcionBean.listaSedes}" var="sede" itemValue="#{sede.id}"  itemLabel="#{sede.nombre}" itemDescription="#{sede.descripcion}"   />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{obj.sede.nombre}" title="#{obj.sede.descripcion}"/>
+                    </p:column>
+
+                    <p:column headerText="Tipo Documento">
+                        <h:outputText value="#{obj.unPersona.maeTipoDocumentoCodigo}" title="#{obj.unPersona.maeTipoDocumentoValor}"/>
+                    </p:column>
+                    <p:column headerText="Número Documento" sortBy="#{obj.unPersona.documentoNumero}" filterBy="#{obj.unPersona.documentoNumero}">
+                        <f:facet name="filter">
+                            <p:inputText label="Número Documento" maxlength="64" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.unPersona.documentoNumero}"/>
+                    </p:column>
+                    <p:column headerText="Primer Nombre" sortBy="#{obj.unPersona.primerNombre}" filterBy="#{obj.unPersona.primerNombre}">
+                        <f:facet name="filter">
+                            <p:inputText label="Primer Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.unPersona.primerNombre}"/>
+                    </p:column>
+                    <p:column headerText="Segundo Nombre" filterBy="#{obj.unPersona.segundoNombre}">
+                        <f:facet name="filter">
+                            <p:inputText label="Segundo Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.unPersona.segundoNombre}"/>
+                    </p:column>
+                    <p:column headerText="Primer Apellido" sortBy="#{obj.unPersona.primerApellido}" filterBy="#{obj.unPersona.primerApellido}">
+                        <f:facet name="filter">
+                            <p:inputText label="Primer Apellido" maxlength="64" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.unPersona.primerApellido}"/>
+                    </p:column>                    
+                    <p:column headerText="Segundo Apellido" filterBy="#{obj.unPersona.segundoApellido}">
+                        <f:facet name="filter">
+                            <p:inputText label="Segundo Apellido" maxlength="64" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.unPersona.segundoApellido}"/>
+                    </p:column>
+
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <!-- Ver -->
+            <p:dialog header="Ver" widgetVar="dialogoVer" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form class="frmAuditoria" style="text-align: right;">
+                        <p:commandButton id="auditoria" class="boton-normal btn1" action="#{suscripcionBean.getAuditoria(suscripcionBean.objeto.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" />
+                    </h:form>
+                    <h:form id="frmVer">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pVer1" header="Información Suscriptor" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelPersona" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Documento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeTipoDocumentoValor}"/>
+
+                                    <p:outputLabel value="Número Documento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.documentoNumero}"/>
+
+                                    <p:outputLabel value="Primer Nombre"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.primerNombre}"/>
+
+                                    <p:outputLabel value="Segundo Nombre"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.segundoNombre}"/>
+
+                                    <p:outputLabel value="Primer Apellido"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.primerApellido}"/>
+
+                                    <p:outputLabel value="Segundo Apellido"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.segundoApellido}"/>
+
+                                    <p:outputLabel value="Género"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeSexoValor}"/>
+
+                                    <p:outputLabel value="Estado Civil"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeEstadoCivilValor}"/>
+
+                                    <p:outputLabel value="Municipio Residencia"/>
+                                    <p:outputLabel value="#{suscripcionBean.getUbicacionRecursiva(suscripcionBean.objeto.unPersona.gnDireccionUbicacion.id)}"/>
+
+                                    <p:outputLabel value="Dirección Residencia"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.direccion}"/>
+
+                                    <p:outputLabel value="Fecha Nacimiento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.fechaNacimiento}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Lugar Nacimiento"/>
+                                    <p:outputLabel value="#{suscripcionBean.getUbicacionRecursiva(suscripcionBean.objeto.unPersona.gnNacimientoUbicacion.id)}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pVer2" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelVer2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="ID Suscripcion"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.id}"/>
+                                    
+                                    <p:outputLabel value="Tipo Suscripcion"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.maeTipoValor}"/>
+
+                                    <p:outputLabel value="Fecha Inicio" />
+                                    <p:outputLabel value="#{suscripcionBean.objeto.fechaInicio}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Fecha Fin"/>                                    
+                                    <p:outputLabel value="#{suscripcionBean.objeto.fechaFin}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Plan"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.maePlanValor}"/>
+
+                                    <p:outputLabel value="Valor"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valor}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pagado"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPagado}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pendiente"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPendiente}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Comercial"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unComercial.nombresApellidos}"/> 
+
+                                    <p:outputLabel value="Sede"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.sede.nombre}" title="#{suscripcionBean.objeto.sede.descripcion}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pVer3" header="Beneficiarios" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelBeneficiario" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaBeneficiarios" var="reg" value="#{suscripcionBean.objeto.listaSuscripcionPersonas}" rowKey="#{reg.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
+
+                                        <p:column headerText="Documento" sortBy="#{reg.unPersona.documentoNumero}">
+                                            <h:outputText value="#{reg.unPersona.maeTipoDocumentoCodigo} #{reg.unPersona.documentoNumero}"/>
+                                        </p:column>
+                                        <p:column headerText="Nombres y Apellidos" sortBy="#{reg.unPersona.nombresApellidos}">
+                                            <h:outputText value="#{reg.unPersona.nombresApellidos}"/>
+                                        </p:column>
+                                        <p:column headerText="Fecha Inicio" sortBy="#{reg.fechaInicio}">
+                                            <h:outputText value="#{reg.fechaInicio}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Fecha Fin" sortBy="#{reg.fechaFin}">
+                                            <h:outputText value="#{reg.fechaFin}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Activo" sortBy="#{reg.activoStr}">
+                                            <h:outputText value="#{reg.activoStr}"/>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesVer" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVer').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Crear -->
+            <p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrear">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrear1" header="Suscriptor" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <div align="right"> 
+                                    <p:commandButton rendered="#{suscripcionBean.accionAdicional1}" immediate="true" action="#{suscripcionBean.listarPersonas(0)}" icon="ui-icon-person" title="Suscriptor"/>
+                                </div>
+                                <p:panelGrid id="panelPersona" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Documento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeTipoDocumentoValor}"/>
+
+                                    <p:outputLabel value="Número Documento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.documentoNumero}"/>
+
+                                    <p:outputLabel value="Primer Nombre"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.primerNombre}"/>
+
+                                    <p:outputLabel value="Segundo Nombre"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.segundoNombre}"/>
+
+                                    <p:outputLabel value="Primer Apellido"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.primerApellido}"/>
+
+                                    <p:outputLabel value="Segundo Apellido"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.segundoApellido}"/>
+
+                                    <p:outputLabel value="Género"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeSexoValor}"/>
+
+                                    <p:outputLabel value="Estado Civil"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeEstadoCivilValor}"/>
+
+                                    <p:outputLabel value="Municipio Residencia"/>
+                                    <p:outputLabel value="#{suscripcionBean.getUbicacionRecursiva(suscripcionBean.objeto.unPersona.gnDireccionUbicacion.id)}"/>
+
+                                    <p:outputLabel value="Dirección Residencia"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.direccion}"/>
+
+                                    <p:outputLabel value="Fecha Nacimiento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.fechaNacimiento}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Lugar Nacimiento"/>
+                                    <p:outputLabel value="#{suscripcionBean.getUbicacionRecursiva(suscripcionBean.objeto.unPersona.gnNacimientoUbicacion.id)}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCrear2" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelCrear2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="ID Suscripcion"/>
+                                    <p:outputLabel value="AUTO"/>
+                                    
+                                    <p:outputLabel value="Tipo Suscripcion" for="tipoSuscripcion"/>
+                                    <p:selectOneMenu id="tipoSuscripcion" label="Tipo Suscripcion" value="#{suscripcionBean.objeto.maeTipoId}">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaMaeTiposSuscripcion}" var="tipo" itemValue="#{tipo.id}"  itemLabel="#{tipo.nombre}" itemDescription="#{tipo.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Fecha Inicio"  style="font-weight:bold" for="fechaInicio"/>
+                                    <p:datePicker id="fechaInicio" label="Fecha Inicio" value="#{suscripcionBean.objeto.fechaInicio}" mindate="#{suscripcionBean.objeto.fechaInicioMinima}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                        <p:ajax event="dateSelect" listener="#{suscripcionBean.calcularFechaFin}" update="fechaFin" />
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Fecha Fin"  style="font-weight:bold" for="fechaFin" />
+                                    <p:datePicker id="fechaFin" label="Fecha Fin" value="#{suscripcionBean.objeto.fechaFin}" disabled="true" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+                                    
+                                    <p:outputLabel value="Plan" for="plan"/>
+                                    <p:selectOneMenu id="plan" label="Plan" value="#{suscripcionBean.objeto.maePlanId}">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaMaePlanes}" var="plan" itemValue="#{plan.id}"  itemLabel="#{plan.nombre}" itemDescription="#{plan.descripcion}"/>
+                                    </p:selectOneMenu>
+                                    
+                                    <p:outputLabel value="Valor"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valor}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pagado"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPagado}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pendiente"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPendiente}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Comercial" for="comercial"/>
+                                    <p:selectOneMenu id="comercial" label="Comercial" value="#{suscripcionBean.objeto.unComercial}" converter="comercialConverterSuscripcion" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaComerciales}" var="com" itemValue="#{com}"  itemLabel="#{com.nombresApellidos}" itemDescription="#{com.nombresApellidos}"/>
+                                    </p:selectOneMenu> 
+
+                                    <p:outputLabel value="Sede" for="sede"/>
+                                    <p:selectOneMenu id="sede" label="Sede" value="#{suscripcionBean.objeto.sede}" converter="sedeConverterSuscripcion" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaSedes}" var="sede" itemValue="#{sede}"  itemLabel="#{sede.nombre}" itemDescription="#{sede.descripcion}"/>
+                                    </p:selectOneMenu> 
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCrear3" header="Beneficiarios" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <div align="right"> 
+                                    <p:commandButton rendered="#{suscripcionBean.accionAdicional1}" immediate="true" action="#{suscripcionBean.listarPersonas(2)}" icon="ui-icon-person" title="Suscriptor"/>
+                                </div>
+                                <p:panelGrid id="panelBeneficiario" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaBeneficiarios" var="reg" value="#{suscripcionBean.objeto.listaSuscripcionPersonas}" rowKey="#{reg.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
+
+                                        <p:column headerText="Documento" sortBy="#{reg.unPersona.documentoNumero}">
+                                            <h:outputText value="#{reg.unPersona.maeTipoDocumentoCodigo} #{reg.unPersona.documentoNumero}"/>
+                                        </p:column>
+                                        <p:column headerText="Nombres y Apellidos" sortBy="#{reg.unPersona.nombresApellidos}">
+                                            <h:outputText value="#{reg.unPersona.nombresApellidos}"/>
+                                        </p:column>
+                                        <p:column headerText="Fecha Inicio" sortBy="#{reg.fechaInicio}">
+                                            <h:outputText value="#{reg.fechaInicio}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Fecha Fin" sortBy="#{reg.fechaFin}">
+                                            <h:outputText value="#{reg.fechaFin}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Activo" sortBy="#{reg.activoStr}">
+                                            <h:outputText value="#{reg.activoStr}"/>
+                                        </p:column>
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                <h:outputText value="Acciones"/>
+                                            </f:facet>                                            
+                                            <p:commandButton rendered="#{suscripcionBean.accionAdicional1}" title="Borrar" immediate="true" action="#{suscripcionBean.beneficiarioBorrar(reg.unPersona.documentoNumero)}" icon="pi pi-trash" class="boton-normal btn1" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrear" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="guardarRemote" action ="#{suscripcionBean.guardar}" update="panelCrear2"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrear').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Editar -->
+            <p:dialog header="Editar" widgetVar="dialogoEditar" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmEditar">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar1" header="Suscriptor" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelPersona" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo Documento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeTipoDocumentoValor}"/>
+
+                                    <p:outputLabel value="Número Documento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.documentoNumero}"/>
+
+                                    <p:outputLabel value="Primer Nombre"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.primerNombre}"/>
+
+                                    <p:outputLabel value="Segundo Nombre"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.segundoNombre}"/>
+
+                                    <p:outputLabel value="Primer Apellido"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.primerApellido}"/>
+
+                                    <p:outputLabel value="Segundo Apellido"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.segundoApellido}"/>
+
+                                    <p:outputLabel value="Género"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeSexoValor}"/>
+
+                                    <p:outputLabel value="Estado Civil"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.maeEstadoCivilValor}"/>
+
+                                    <p:outputLabel value="Municipio Residencia"/>
+                                    <p:outputLabel value="#{suscripcionBean.getUbicacionRecursiva(suscripcionBean.objeto.unPersona.gnDireccionUbicacion.id)}"/>
+
+                                    <p:outputLabel value="Dirección Residencia"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.direccion}"/>
+
+                                    <p:outputLabel value="Fecha Nacimiento"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.unPersona.fechaNacimiento}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Lugar Nacimiento"/>
+                                    <p:outputLabel value="#{suscripcionBean.getUbicacionRecursiva(suscripcionBean.objeto.unPersona.gnNacimientoUbicacion.id)}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pEditar2" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelEditar2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="ID Suscripcion"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.id}"/>
+                                    
+                                    <p:outputLabel value="Tipo Suscripcion" for="tipoSuscripcion"/>
+                                    <p:selectOneMenu id="tipoSuscripcion" label="Tipo Suscripcion" value="#{suscripcionBean.objeto.maeTipoId}">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaMaeTiposSuscripcion}" var="tipo" itemValue="#{tipo.id}"  itemLabel="#{tipo.nombre}" itemDescription="#{tipo.descripcion}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Fecha Inicio"  style="font-weight:bold" for="fechaInicio"/>
+                                    <p:datePicker id="fechaInicio" label="Fecha Inicio" value="#{suscripcionBean.objeto.fechaInicio}" mindate="#{suscripcionBean.objeto.fechaInicioMinima}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                        <p:ajax event="dateSelect" listener="#{suscripcionBean.calcularFechaFin}" update="fechaFin" />
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Fecha Fin"  style="font-weight:bold" for="fechaFin"/>
+                                    <p:datePicker id="fechaFin" label="Fecha Fin" value="#{suscripcionBean.objeto.fechaFin}" disabled="true" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+
+                                    <p:outputLabel value="Plan"/> 
+                                    <p:outputLabel value="#{suscripcionBean.objeto.maePlanValor}"/>
+
+                                    <p:outputLabel value="Valor"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valor}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pagado"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPagado}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pendiente"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPendiente}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Comercial" for="comercial"/>
+                                    <p:selectOneMenu id="comercial" label="Comercial" value="#{suscripcionBean.objeto.unComercial}" converter="comercialConverterSuscripcion" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaComerciales}" var="com" itemValue="#{com}"  itemLabel="#{com.nombresApellidos}" itemDescription="#{com.nombresApellidos}"/>
+                                    </p:selectOneMenu> 
+
+                                    <p:outputLabel value="Sede" for="sede"/>
+                                    <p:selectOneMenu id="sede" label="Sede" value="#{suscripcionBean.objeto.sede}" converter="sedeConverterSuscripcion" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaSedes}" var="sede" itemValue="#{sede}"  itemLabel="#{sede.nombre}" itemDescription="#{sede.descripcion}"/>
+                                    </p:selectOneMenu> 
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pEditar3" header="Beneficiarios" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <div align="right"> 
+                                    <p:commandButton rendered="#{suscripcionBean.accionAdicional1}" immediate="true" action="#{suscripcionBean.listarPersonas(3)}" icon="ui-icon-person" styleClass="boton-normal btn1" title="Suscriptor"/>
+                                </div>
+                                <p:panelGrid id="panelBeneficiario" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaBeneficiarios" var="reg" value="#{suscripcionBean.objeto.listaSuscripcionPersonas}" rowKey="#{reg.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
+
+                                        <p:column headerText="Documento" sortBy="#{reg.unPersona.documentoNumero}">
+                                            <h:outputText value="#{reg.unPersona.maeTipoDocumentoCodigo} #{reg.unPersona.documentoNumero}"/>
+                                        </p:column>
+                                        <p:column headerText="Nombres y Apellidos" sortBy="#{reg.unPersona.nombresApellidos}">
+                                            <h:outputText value="#{reg.unPersona.nombresApellidos}"/>
+                                        </p:column>
+                                        <p:column headerText="Fecha Inicio" sortBy="#{reg.fechaInicio}">
+                                            <h:outputText value="#{reg.fechaInicio}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Fecha Fin" sortBy="#{reg.fechaFin}">
+                                            <h:outputText value="#{reg.fechaFin}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Activo" sortBy="#{reg.activoStr}">
+                                            <h:outputText value="#{reg.activoStr}"/>
+                                        </p:column>
+                                        <p:column style="text-align: center;">
+                                            <f:facet name="header">
+                                                <h:outputText value="Acciones"/>
+                                            </f:facet>                                            
+                                            <p:commandButton rendered="#{suscripcionBean.accionAdicional1 and reg.estadoRegistro == 0 and reg.activo == true}" title="Retirar" immediate="true" action="#{suscripcionBean.beneficiarioRetirar(reg.id)}" icon="pi pi-times" class="boton-normal btn1">
+                                                <p:confirm header="Confirmación" message="Está seguro que desea retirar al beneficiario?" icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton rendered="#{suscripcionBean.accionAdicional1 and reg.estadoRegistro == 1}" title="Borrar" immediate="true" action="#{suscripcionBean.beneficiarioBorrar(reg.unPersona.documentoNumero)}" icon="pi pi-trash" class="boton-normal btn1" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Modificar" type="button" class="boton btn-azul"   onclick="modificarRemote()" validateClient="true" styleClass="btn-modificar" />
+                                        <p:remoteCommand name="modificarRemote" action="#{suscripcionBean.modificar}" update="panelEditar2" />
+                                        <p:commandButton value="Cancelar" type="button" class="boton btn-rojo" onclick="PF('dialogoEditar').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Consultar Personas Crear -->            
+            <p:dialog header="Consultar Personas" widgetVar="dialogoPersonaListar" appendTo="@(body)" modal="true" style="max-width: 90%;max-height: 90%;" dynamic="true" onShow="PF('tablaPersonasWidget').filter()" onHide="asignarPersona()">
+                <h:form id="frmPersonaListar">
+                    <div align="right">
+                        <p:commandButton rendered="#{suscripcionBean.accionAdicional1}" title="Refrescar" actionListener="#{suscripcionBean.refrescarPersona()}" oncomplete="PF('tablaPersonasWidget').filter()" icon="pi pi-sync " class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{suscripcionBean.accionAdicional1}" immediate="true" action="#{suscripcionBean.crearPersona()}" icon="pi pi-file-o" class="boton-normal btn1" title="Crear"/>
+                    </div>
+                    <p:scrollPanel mode="native" style="max-height: 550px;">
+                        <p:dataTable id="tablaRegistros" widgetVar="tablaPersonasWidget" var="obj" value="#{suscripcionBean.lazyPersonas}" rowKey="#{obj.id}"
+                                     rows="#{suscripcionBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                                     currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,30,50,100" 
+                                     emptyMessage="No se encontraron registros" selectionMode="single">
+                            <p:ajax event="rowSelect" listener="#{suscripcionBean.onRowPersonaSelect}" />
+
+                            <p:column headerText="Persona" sortBy="#{obj.maeTipoDocumentoValor}" filterBy="#{obj.maeTipoDocumentoValor}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Persona" maxlength="128" style="width: 95%;" onchange="PF('tablaPersonasWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.maeTipoDocumentoValor}"/>
+                            </p:column>
+                            <p:column headerText="Documento" sortBy="#{obj.documentoNumero}" filterBy="#{obj.documentoNumero}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Documento" maxlength="16" style="width: 95%;" onchange="PF('tablaPersonasWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.documentoNumero}"/>
+                            </p:column>
+                            <p:column headerText="Primer Nombre" sortBy="#{obj.primerNombre}" filterBy="#{obj.primerNombre}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Primer Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaPersonasWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.primerNombre}"/>
+                            </p:column>
+                            <p:column headerText="Segundo Nombre" sortBy="#{obj.segundoNombre}" filterBy="#{obj.segundoNombre}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Segundo Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaPersonasWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.segundoNombre}"/>
+                            </p:column>
+                            <p:column headerText="Primer Apellido" sortBy="#{obj.primerApellido}" filterBy="#{obj.primerApellido}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Priemer Apellido" maxlength="64" style="width: 95%;" onchange="PF('tablaPersonasWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.primerApellido}"/>
+                            </p:column>
+                            <p:column headerText="Segundo Apellido" sortBy="#{obj.segundoApellido}" filterBy="#{obj.segundoApellido}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Segundo Apellido" maxlength="64" style="width: 95%;" onchange="PF('tablaPersonasWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.segundoApellido}"/>
+                            </p:column>
+
+                        </p:dataTable>     
+                    </p:scrollPanel>
+                </h:form>
+            </p:dialog>
+            
+            <!-- Cartera -->
+            <p:dialog header="Cartera" widgetVar="dialogoCartera" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmCartera">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pSuscripcion" header="Información Suscripcion" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelSuscripcion" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="ID Suscripcion"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.id}"/>
+                                    
+                                    <p:outputLabel value="Tipo Suscripcion"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.maeTipoValor}"/>
+
+                                    <p:outputLabel value="Plan"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.maePlanValor}"/>
+
+                                    <p:outputLabel value="Valor"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valor}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pagado"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPagado}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Pendiente"/>
+                                    <p:outputLabel value="#{suscripcionBean.objeto.valorPendiente}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCartera" header="Cartera" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCartera" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaCarteras" var="cart" value="#{suscripcionBean.objeto.listaSuscripcionCarteras}" rowKey="#{cart.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
+                                        
+                                        <p:column headerText="Fecha Generación">
+                                            <h:outputText value="#{cart.fechaGeneracion}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Valor A Pagar">
+                                            <h:outputText value="#{cart.valorAPagar}">
+                                                <f:convertNumber pattern="$ #,##0.00"/>
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Estado">
+                                            <h:outputText value="#{cart.estadoStr}"/>
+                                        </p:column>
+                                        <p:column headerText="Fecha Máxima Pago">
+                                            <h:outputText value="#{cart.fechaMaxima}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Fecha Pago Total">
+                                            <h:outputText value="#{cart.fechaPago}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Valor Pagado">
+                                            <h:outputText value="#{cart.valorPagado}">
+                                                <f:convertNumber pattern="$ #,##0.00"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pPago" header="Pagos" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <div align="right">
+                                    <p:commandButton rendered="#{suscripcionBean.accionAdicional2}" immediate="true" action="#{suscripcionBean.crearPago}" icon="pi pi-file-o" styleClass="boton-normal btn1" title="Crear Pago"/>
+                                </div>
+                                <p:panelGrid id="panelPago" columns="1" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
+                                    <p:dataTable id="tablaPagos" var="pag" value="#{suscripcionBean.objeto.listaSuscripcionPagos}" rowKey="#{pag.id}"
+                                                 styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
+                                        
+                                        <p:column headerText="Fecha Fin">
+                                            <h:outputText value="#{pag.fecha}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                            </h:outputText>
+                                        </p:column>
+                                        <p:column headerText="Forma Pago">
+                                            <h:outputText value="#{pag.maeFormaPagoValor}"/>
+                                        </p:column>
+                                        <p:column headerText="Valor">
+                                            <h:outputText value="#{pag.valor}">
+                                                <f:convertNumber pattern="$ #,##0.00"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCartera" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoCartera').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+            
+            <!-- Crear Pago -->
+            <p:dialog header="CrearPago" widgetVar="dialogoCrearPago" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrearPago">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrear" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelCrear" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Forma Pago" for="formaPago"/>
+                                    <p:selectOneMenu id="formaPago" label="Forma Pago" value="#{suscripcionBean.objetoPago.maeFormaPagoId}" required="true">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{suscripcionBean.listaMaeFormasPago}" var="forma" itemValue="#{forma.id}"  itemLabel="#{forma.nombre}" itemDescription="#{forma.descripcion}"/>
+                                    </p:selectOneMenu>
+                                    
+                                    <p:outputLabel value=""/>                                    
+                                    <p:outputLabel value=""/>
+
+                                    <p:outputLabel value="Fecha"  style="font-weight:bold" for="fecha"/>
+                                    <p:datePicker id="fecha" label="Fecha" value="#{suscripcionBean.objetoPago.fecha}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+                                    
+                                    <p:outputLabel value="Valor" for="valor"/>
+                                    <p:inputNumber id="valor" label="Valor" value="#{suscripcionBean.objetoPago.valor}" symbol="$" minValue="1" maxValue="1000000000" symbolPosition="p" decimalSeparator="," thousandSeparator="." required="true" />
+                                    
+                                </p:panelGrid>
+                            </p:panel>                            
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrear" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="guardarRemote" action ="#{suscripcionBean.guardarPago}" update="pCrear"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrearPago').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+        </center>
+    </ui:define>
+</ui:composition>

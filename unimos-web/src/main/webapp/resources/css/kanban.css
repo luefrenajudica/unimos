@@ -1,0 +1,309 @@
+.ui-dashboard-column {
+    background: #f1f1f1;
+    height: 500vh;
+    width: 19.55%;
+    margin-right: 5px;
+}
+.col0{background:#f5f5f5;}
+.col1{background:#f5f5f5;}
+.col2{background:#f5f5f5;}
+.col3{background:#f5f5f5;}
+.col4{background:#f5f5f5;}
+.col-titulo{
+    width: 18.9%;
+    float: left;
+    background: #e6e6e6;
+    color: white;
+    font-weight: bold;
+    font-size: 16px!important;
+    margin-right: 0.47%;
+    border-style: none;
+    border-color: #dddddd;
+    border-width: 1px;
+    border-radius: 0px;
+    padding: 0px;
+}
+.ui-widget-content {
+    text-align: left;
+}
+.kanban_responsable {
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: bold;
+    background: #fdfdfd;
+    width: 100%;
+    color: black;
+}
+.kanban_avance {
+    display: inline-block;
+    font-size: 11px;
+}
+.kanban_tarea {
+    position:relative;
+    word-break: break-all;
+    width:96%;
+}
+.fl {
+    float:left;
+}
+.kanban_boton_ver {
+    padding: 0px;
+    width: 19px;
+    float: right;
+    height: 18px;
+}
+.kanban_toolbar {
+    background: #f5f5f5!important;
+    color: black;
+}
+.kanban_titulo {
+    color: white;
+    text-align: center;
+    word-break: break-word;
+}
+.kanban_titulo_modulo {
+    display: block;
+    text-align: left;
+}
+
+.form_kanban {
+    background: #f5f5f5;
+}
+
+.kanban_rojo .ui-panel-titlebar  {
+    background:#white!important;
+    color:black;
+}
+
+.kanban_amarillo .ui-panel-titlebar  {
+    background:#ffffff!important;
+    color:black;
+}
+
+.kanban_tarea .ui-panel-titlebar .ui-panel-title {
+    display: inline-block;
+    max-width: 82%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 0px;
+    margin-left: 9px;
+    font-size: 0.9em;
+    letter-spacing: -0.2px;
+    word-break: break-word;
+}
+
+.kanban_tarea .ui-panel-titlebar a {
+    position: absolute;
+    right: 7px;
+}
+
+.kanban_tarea .ui-panel-titlebar .ui-panel-titlebar-icon {
+    margin-top:0px;
+}
+.kanban_tarea .ui-panel-titlebar {
+    background: #ffffff;
+    border-color: #3a79a9;
+    border-radius: 3px;
+}
+
+.kanban_fecha_vencimiento {
+    font-size: 0.5rem;
+    padding-left: 0px;
+    font-style: italic;
+}
+
+.kanban_proyecto {
+    display: inline-block;
+    width: 100%;
+    font-size: 10px;
+    text-transform: capitalize;
+}
+
+.kanban_carpeta {
+    display: inline-block;
+    width: 100%;
+    font-size: 10px;
+    text-transform: capitalize;
+}
+
+.kanban-filtro {
+    width: 75%;
+}
+
+.kanban_toolbar .ui-toolbar-group-left {
+    width:100%;
+}
+
+#filtros_kanban {
+    width: 98%;
+    background: #f5f5f5;
+    display: inline-block;
+    padding-top: 4px;
+    padding-left: 11px;
+    padding-right: 15px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    border-top: 1px solid #d4d4d4;
+}
+.col-titulo {
+    background:#fff;
+    padding: 3px;
+    border-color: #e6e6e6;
+    border-style: solid;
+    border-radius: 6px;
+}
+
+.col-titulo .ui-panel-content {
+    background: #0088cc;
+    text-align: center;
+}
+
+.ui-panel .ui-panel-content {
+    padding: .3em 0.5em;
+}
+
+@media only screen and (max-width:1400px) {
+    .ui-dashboard-column {
+        width: 19.4%;
+    }
+    .col-titulo {
+        width: 18.7%;
+    }
+    .kanban_fecha_vencimiento {
+    font-size: 0.6rem;
+    }
+}
+
+@media only screen and (min-width:1333px) {
+    .kanban_fecha_vencimiento {
+        font-size: 0.6rem;
+    }
+}
+
+@media only screen and (max-width:1300px) {
+    .ui-dashboard-column {
+        width: 19.15%;
+    }
+    .col-titulo {
+        width: 18.45%;
+    }
+
+}
+
+@media only screen and (max-width:1000px) {
+
+    .kanban_tarea .ui-panel-titlebar .ui-panel-title {
+        max-width: 80%;
+    }
+}
+
+@media only screen and (max-width:1158px) {
+
+    .ui-dashboard-column {
+        width: 18.7%;
+    }
+    .col-titulo {
+        width: 17.95%;
+    }
+}
+
+@media only screen and (max-width:960px) {
+    .ui-dashboard-column {
+        width: 18.25%;
+    }
+    .col-titulo {
+        width: 17.45%;
+    }
+}
+
+@media only screen and (max-width:720px) {
+    .ui-dashboard-column {
+        width: 17.37%;
+    }
+    .col-titulo {
+        width: 16.47%;
+    }
+}
+
+@media only screen and (max-width:400px) {
+    .ui-dashboard-column {
+        width: 17.5%;
+    }
+    .col-titulo {
+        width: 17.5%;
+    }
+}
+
+.box .jqplot-series-shadowCanvas {
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(219,219,219,1);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(219,219,219,1);
+    box-shadow: 7px 7px 7px 0px rgba(219,219,219,1);
+    border-color: #999999;
+    border-style: solid;
+}
+
+.kanban_icono_estado {
+    max-width: 10px;
+    position: absolute;
+    left: 5px;
+    top: 10px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 160px;
+    background-color: white;
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    margin-left: -80px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    top: -16px;
+    padding: 2px;
+    word-break: break-word;
+    border-color: #0088cc;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.ui-panel .ui-panel-content {
+    word-break: break-word;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container {
+    width: 97%;
+}
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
+    right: 4px;
+}
+
+.ui-button-icon-left {
+     left: 0em;
+}

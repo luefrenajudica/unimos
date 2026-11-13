@@ -1,0 +1,735 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <h:outputStylesheet name="css/modulo.css"/>        
+        <center>
+
+            <!-- Listar -->
+            <h:form id="frmContratos">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{contratoBean.modulo.descripcion}">#{contratoBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{contratoBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{contratoBean.refrescar}" icon="pi pi-sync " styleClass="boton-normal btn1"/>
+                        <p:commandButton rendered="#{contratoBean.accionCrear}" title="Crear" actionListener="#{contratoBean.crear}" icon="pi pi-file-o" styleClass="boton-normal btn1"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaRegistrosWidget" var="obj" value="#{contratoBean.lazyRegistros}" rowKey="#{obj.id}"
+                             rows="#{contratoBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros" >
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>    
+                        <p:commandButton rendered="#{contratoBean.accionVer}" title="Ver" actionListener="#{contratoBean.ver(obj.id)}" icon="pi pi-search" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{contratoBean.accionEditar}" title="Editar" actionListener="#{contratoBean.editar(obj.id)}" icon="pi pi-pencil" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{contratoBean.accionAdicional1}" title="Detalles" actionListener="#{contratoBean.listarDetalles(obj.id)}" icon="pi pi-align-left" class="boton-normal btn1"/>
+                        <p:commandButton rendered="#{contratoBean.accionBorrar}" title="Borrar" action="#{contratoBean.borrar(obj.id)}" icon="pi pi-trash" class="boton-normal btn1">
+                            <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                        </p:commandButton>                        
+                    </p:column>
+
+                    <p:column headerText="Entidad Nit" sortBy="#{obj.unEntidad.nit}" filterBy="#{obj.unEntidad.nit}">
+                        <f:facet name="filter">
+                            <p:inputText label="Entidad Nit" maxlength="16" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.unEntidad.nit}"/>
+                    </p:column>
+
+                    <p:column headerText="Entidad Nombre Comercial" sortBy="#{obj.unEntidad.nombreComercial}" filterBy="#{obj.unEntidad.nombreComercial}">
+                        <f:facet name="filter">
+                            <p:inputText label="Entidad Nombre Comercial" maxlength="16" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText title="#{obj.unEntidad.razonSocial}" value="#{obj.unEntidad.nombreComercial}"/>
+                    </p:column>
+
+                    <p:column headerText="Contrato" sortBy="#{obj.contrato}" filterBy="#{obj.contrato}">
+                        <f:facet name="filter">
+                            <p:inputText label="Contrato" maxlength="16" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.contrato}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha Inicial" sortBy="#{obj.fechaInicial}">
+                        <h:outputText value="#{obj.fechaInicial}">
+                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Fecha Final" sortBy="#{obj.fechaFinal}">
+                        <h:outputText value="#{obj.fechaFinal}">
+                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Activo" filterBy="#{obj.activo}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaRegistrosWidget').filter()" >
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="SI" itemValue="true" />
+                                <f:selectItem itemLabel="NO" itemValue="false" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText title="#{obj.activoStr}" value="#{obj.activoStr}"/>
+                    </p:column>
+
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <!-- Ver -->
+            <p:dialog header="Ver" widgetVar="dialogoVer" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form class="frmAuditoria" style="text-align: right;">
+                        <p:commandButton id="auditoria" class="boton-normal btn1" action="#{contratoBean.getAuditoria(contratoBean.objeto.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" />
+                    </h:form>
+                    <h:form id="frmVer">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pVer1" header="Entidad" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEntidad" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.maeTipoValor}"/>
+
+                                    <p:outputLabel value="NIT"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nit}"/>
+
+                                    <p:outputLabel value="Nombre Comercial"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nombreComercial}"/>
+
+                                    <p:outputLabel value="Razón Social"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.razonSocial}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pVer2" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelVer2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Conrato"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.contrato}"/>
+
+                                    <p:outputLabel value="Activo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.activoStr}"/>
+
+                                    <p:outputLabel value="Fecha Inicial" />
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaInicial}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Fecha Final"/>                                    
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaFinal}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                </p:panelGrid>
+                            </p:panel>                            
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesVer" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVer').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Crear -->
+            <p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrear">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrear1" header="Entidad" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEntidad" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel id="tipo" value="#{contratoBean.objeto.unEntidad.maeTipoValor}"/>
+
+                                    <p:outputLabel value="NIT" for="nit"/>
+                                    <p:selectOneMenu id="nit" label="NIT" value="#{contratoBean.objeto.unEntidad.id}" filter="true" required="true">
+                                        <p:ajax update="tipo,nombreComercial,razonSocial"/>
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{contratoBean.listaEntidades}" var="ent" itemValue="#{ent.id}"  itemLabel="#{ent.nit}" itemDescription="#{ent.nombreComercial}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Nombre Comercial" for="nombreComercial"/>
+                                    <p:selectOneMenu id="nombreComercial" label="Nombre COmercial" value="#{contratoBean.objeto.unEntidad.id}" filter="true" required="true">
+                                        <p:ajax update="tipo,nit,razonSocial"/>
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{contratoBean.listaEntidades}" var="ent" itemValue="#{ent.id}"  itemLabel="#{ent.nombreComercial}" itemDescription="#{ent.nombreComercial}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Razón Social" for="razonSocial"/>                                    
+                                    <p:selectOneMenu id="razonSocial" label="Razón Social" value="#{contratoBean.objeto.unEntidad.id}" filter="true" required="true">
+                                        <p:ajax update="tipo,nit,nombreComercial"/>
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{contratoBean.listaEntidades}" var="ent" itemValue="#{ent.id}" itemLabel="#{ent.razonSocial}" itemDescription="#{ent.nombreComercial}"/>
+                                    </p:selectOneMenu>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCrear2" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelCrear2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Contrato" for="contrato"/>
+                                    <p:inputText id="contrato" label="Contrato" value="#{contratoBean.objeto.contrato}" maxlength="16" required="true"/>
+
+                                    <p:outputLabel value="Activo" for="activo"/>
+                                    <p:selectOneRadio id="activo" value="#{contratoBean.objeto.activo}">
+                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel value="Fecha Inicial"  style="font-weight:bold" for="fechaInicial"/>
+                                    <p:datePicker id="fechaInicial" label="Fecha Inicial" value="#{contratoBean.objeto.fechaInicial}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Fecha Final"  style="font-weight:bold" for="fechaFinal" />
+                                    <p:datePicker id="fechaFinal" label="Fecha Final" value="#{contratoBean.objeto.fechaFinal}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrear" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="guardarRemote" action ="#{contratoBean.guardar}" update="panelEntidad,panelCrear2"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrear').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Editar -->
+            <p:dialog header="Editar" widgetVar="dialogoEditar" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmEditar">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar1" header="Entidad" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEntidad" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.maeTipoValor}"/>
+
+                                    <p:outputLabel value="NIT"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nit}"/>
+
+                                    <p:outputLabel value="Nombre Comercial"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nombreComercial}"/>
+
+                                    <p:outputLabel value="Razón Social"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.razonSocial}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pEditar2" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelEditar2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Contrato" for="contrato"/>
+                                    <p:inputText id="contrato" label="Contrato" value="#{contratoBean.objeto.contrato}" maxlength="16" required="true"/>
+
+                                    <p:outputLabel value="Activo" for="activo"/>
+                                    <p:selectOneRadio id="activo" value="#{contratoBean.objeto.activo}">
+                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel value="Fecha Inicial"  style="font-weight:bold" for="fechaInicial"/>
+                                    <p:datePicker id="fechaInicial" label="Fecha Inicial" value="#{contratoBean.objeto.fechaInicial}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Fecha Finalal"  style="font-weight:bold" for="fechaFinal" />
+                                    <p:datePicker id="fechaFinal" label="Fecha Final" value="#{contratoBean.objeto.fechaFinal}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
+
+                                </p:panelGrid>
+                            </p:panel>                            
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Modificar" type="button" class="boton btn-azul"   onclick="modificarRemote()" validateClient="true" styleClass="btn-modificar" />
+                                        <p:remoteCommand name="modificarRemote" action="#{contratoBean.modificar}" update="panelEditar2" />
+                                        <p:commandButton value="Cancelar" type="button" class="boton btn-rojo" onclick="PF('dialogoEditar').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Listar detalles -->
+            <p:dialog header="Detalles" widgetVar="dialogoListarDetalles" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <!-- Listar -->
+                    <h:form id="frmDetalles">
+                        <p:toolbar>
+                            <f:facet name="left" >
+                                <span title="Contrato: #{contratoBean.objeto.contrato}">Contrato: #{contratoBean.objeto.contrato}</span>
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton rendered="#{contratoBean.accionAdicional1}" title="Refrescar" ajax="false" actionListener="#{contratoBean.refrescarDetalles}" icon="pi pi-sync " styleClass="boton-normal btn1"/>
+                                <p:commandButton rendered="#{contratoBean.accionAdicional1}" title="Crear" actionListener="#{contratoBean.crearDetalle}" icon="pi pi-file-o" styleClass="boton-normal btn1"/>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:dataTable id="tablaRegistros" widgetVar="tablaDetallesWidget" var="obj" value="#{contratoBean.lazyDetalles}" rowKey="#{obj.id}"
+                                     rows="#{contratoBean.tamanoPagina}" paginator="true" lazy="true" reflow="true" styleClass="tablaNueva"
+                                     currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,30,50,100" 
+                                     emptyMessage="No se encontraron registros" >
+                            <p:column style="text-align: center;">
+                                <f:facet name="header">
+                                    <h:outputText value="Acciones"/>
+                                </f:facet>    
+                                <p:commandButton rendered="#{contratoBean.accionAdicional1}" title="Ver" actionListener="#{contratoBean.verDetalle(obj.id)}" icon="pi pi-search" class="boton-normal btn1"/>
+                                <p:commandButton rendered="#{contratoBean.accionAdicional1}" title="Editar" actionListener="#{contratoBean.editarDetalle(obj.id)}" icon="pi pi-pencil" class="boton-normal btn1"/>
+                                <p:commandButton rendered="#{contratoBean.accionAdicional1}" title="Borrar" action="#{contratoBean.borrarDetalle(obj.id)}" icon="pi pi-trash" class="boton-normal btn1">
+                                    <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
+
+                            <p:column headerText="Tecnología Código" sortBy="#{obj.unTecnologia.codigo}" filterBy="#{obj.unTecnologia.codigo}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Tecnología Código" maxlength="8" style="width: 95%;" onchange="PF('tablaDetallesWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.unTecnologia.codigo}"/>
+                            </p:column>
+
+                            <p:column headerText="Tecnología Código Própio" sortBy="#{obj.unTecnologia.codigoPropio}" filterBy="#{obj.unTecnologia.codigoPropio}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Tecnología Código Própio" maxlength="8" style="width: 95%;" onchange="PF('tablaDetallesWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.unTecnologia.codigoPropio}"/>
+                            </p:column>
+
+                            <p:column headerText="Tecnología Código Própio" sortBy="#{obj.unTecnologia.descripcion}" filterBy="#{obj.unTecnologia.nombre}">
+                                <f:facet name="filter">
+                                    <p:inputText label="Tecnología Nombre" maxlength="64" style="width: 95%;" onchange="PF('tablaDetallesWidget').filter()"/>
+                                </f:facet>
+                                <h:outputText value="#{obj.unTecnologia.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="Fecha Inicio" sortBy="#{obj.fechaInicio}">
+                                <h:outputText value="#{obj.fechaInicio}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Fecha Inicio" sortBy="#{obj.fechaFin}">
+                                <h:outputText value="#{obj.fechaFin}">
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Valor Suscriptor" sortBy="#{obj.valorSuscriptor}">
+                                <h:outputText value="#{obj.valorSuscriptor}">
+                                    <f:convertNumber pattern="$ #,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Valor Convénio" sortBy="#{obj.valorConvenio}">
+                                <h:outputText value="#{obj.valorConvenio}">
+                                    <f:convertNumber pattern="$ #,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Activo" filterBy="#{obj.activo}">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tablaRegistrosWidget').filter()" >
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItem itemLabel="SI" itemValue="true" />
+                                        <f:selectItem itemLabel="NO" itemValue="false" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText title="#{obj.activoStr}" value="#{obj.activoStr}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                        </p:confirmDialog>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Ver Detalle -->
+            <p:dialog header="Ver Detalle" widgetVar="dialogoVerDetalle" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form class="frmAuditoria" style="text-align: right;">
+                        <p:commandButton id="auditoria" class="boton-normal btn1" action="#{contratoBean.getAuditoria(contratoBean.objeto.auditoriaStrHTML)}" icon="pi pi-comment" title="Auditoria" />
+                    </h:form>
+                    <h:form id="frmVerDetalle">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pVer1" header="Información Contrato" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelVer1" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.maeTipoValor}"/>
+
+                                    <p:outputLabel value="NIT"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nit}"/>
+
+                                    <p:outputLabel value="Nombre Comercial"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nombreComercial}"/>
+
+                                    <p:outputLabel value="Razón Social"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.razonSocial}"/>
+
+                                    <p:outputLabel value="Conrato"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.contrato}"/>
+
+                                    <p:outputLabel value="Activo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.activoStr}"/>
+
+                                    <p:outputLabel value="Fecha Inicial" />
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaInicial}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Fecha Final"/>                                    
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaFinal}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pVer2" header="Información Tecnologia" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelVer2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo" />
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.tipoStr}"/>
+
+                                    <p:outputLabel value="Código"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.codigo}"/>
+
+                                    <p:outputLabel value="Código Própio"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.codigoPropio}"/>
+
+                                    <p:outputLabel value="Nonbre" />
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.nombre}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pVer3" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+
+                                <p:panelGrid id="panelVer3" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Fehca Inicio"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.fechaInicio}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Fecha Fin"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.fechaFin}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Suscriptor"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.valorSuscriptor}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Valor Convenio" />             
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.valorConvenio}">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Activo" />
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.activoStr}" />
+
+                                </p:panelGrid>
+
+                            </p:panel>                            
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesVer" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Salir" type="button" onclick="PF('dialogoVerDetalle').hide()" immediate="true" styleClass="boton btn-salir"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Crear Detalle-->
+            <p:dialog header="Crear Detalle" widgetVar="dialogoCrearDetalle" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >
+                    <h:form id="frmCrearDetalle">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pCrear1" header="Información Contrato" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrear1" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.maeTipoValor}"/>
+
+                                    <p:outputLabel value="NIT"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nit}"/>
+
+                                    <p:outputLabel value="Nombre Comercial"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nombreComercial}"/>
+
+                                    <p:outputLabel value="Razón Social"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.razonSocial}"/>
+
+                                    <p:outputLabel value="Conrato"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.contrato}"/>
+
+                                    <p:outputLabel value="Activo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.activoStr}"/>
+
+                                    <p:outputLabel value="Fecha Inicial" />
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaInicial}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Fecha Final"/>                                    
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaFinal}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCrear2" header="Información Tecnología" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrear2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel id="tecTipo" value="#{contratoBean.objetoDetalle.unTecnologia.tipoStr}"/>
+
+                                    <p:outputLabel value="Código" for="tecCodigo"/>
+                                    <p:selectOneMenu id="tecCodigo" label="Código" value="#{contratoBean.objetoDetalle.unTecnologia.id}" filter="true">
+                                        <p:ajax update="tecTipo,tecCodigoPropio,tecNombre"/>
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{contratoBean.listaTecnologias}" var="tec" itemValue="#{tec.id}"  itemLabel="#{tec.codigo}" itemDescription="#{tec.codigo}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Código Própio" for="tecCodigoPropio"/>
+                                    <p:selectOneMenu id="tecCodigoPropio" label="Código Própio" value="#{contratoBean.objetoDetalle.unTecnologia.id}" filter="true">
+                                        <p:ajax update="tecTipo,tecCodigo,tecNombre"/>
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{contratoBean.listaTecnologias}" var="tec" itemValue="#{tec.id}"  itemLabel="#{tec.codigoPropio}" itemDescription="#{tec.codigoPropio}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Nombre" for="tecNombre"/>
+                                    <p:selectOneMenu id="tecNombre" label="Nombre" value="#{contratoBean.objetoDetalle.unTecnologia.id}" filter="true">
+                                        <p:ajax update="tecTipo,tecCodigo,tecCodigoPropio"/>
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{contratoBean.listaTecnologias}" var="tec" itemValue="#{tec.id}"  itemLabel="#{tec.descripcion}" itemDescription="#{tec.nombre}"/>
+                                    </p:selectOneMenu>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pCrear3" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelCrear3" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Fehca Inicio" for="fechaInicio"/>
+                                    <p:datePicker id="fechaInicio" label="Fecha Inicio" value="#{contratoBean.objetoDetalle.fechaInicio}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Fecha Fin" for="fechaFin"/>
+                                    <p:datePicker id="fechaFin" label="Fecha Inicio" value="#{contratoBean.objetoDetalle.fechaFin}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Valor Suscriptor" for="valorSuscriptor"/>
+                                    <p:inputNumber id="valorSuscriptor" label="Valor" value="#{contratoBean.objetoDetalle.valorSuscriptor}" symbol="$" minValue="1" maxValue="1000000000" symbolPosition="p" decimalSeparator="," thousandSeparator="." required="true" />
+
+                                    <p:outputLabel value="Valor Convenio" for="valorConvenio" />
+                                    <p:inputNumber id="valorConvenio" label="Valor" value="#{contratoBean.objetoDetalle.valorConvenio}" symbol="$" minValue="1" maxValue="1000000000" symbolPosition="p" decimalSeparator="," thousandSeparator="." required="true" />
+
+                                    <p:outputLabel value="Activo" for="activo" />
+                                    <p:selectOneRadio id="activo" value="#{contratoBean.objetoDetalle.activo}">
+                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                    </p:selectOneRadio>
+
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesCrear" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true" styleClass="btn-guardar"/>
+                                        <p:remoteCommand name="guardarRemote" action ="#{contratoBean.guardarDetalle}" update="frmCrearDetalle"/>
+                                        <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrearDetalle').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+            <!-- Editar Detalle -->
+            <p:dialog header="Editar Detalle" widgetVar="dialogoEditarDetalle" appendTo="@(body)" modal="true" 
+                      draggable="true" resizable="true" closable="true" closeOnEscape="true"
+                      styleClass="medioscreen-dialog" responsive="true" fitViewport="true" showEffect="fade">
+                <div class="bodyDialog" >    
+                    <h:form id="frmEditarDetalle">
+                        <p:scrollPanel mode="native">
+                            <p:panel id="pEditar1" header="Información Contrato" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar1" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.maeTipoValor}"/>
+
+                                    <p:outputLabel value="NIT"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nit}"/>
+
+                                    <p:outputLabel value="Nombre Comercial"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.nombreComercial}"/>
+
+                                    <p:outputLabel value="Razón Social"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.unEntidad.razonSocial}"/>
+
+                                    <p:outputLabel value="Conrato"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.contrato}"/>
+
+                                    <p:outputLabel value="Activo"/>
+                                    <p:outputLabel value="#{contratoBean.objeto.activoStr}"/>
+
+                                    <p:outputLabel value="Fecha Inicial" />
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaInicial}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                    <p:outputLabel value="Fecha Final"/>                                    
+                                    <p:outputLabel value="#{contratoBean.objeto.fechaFinal}">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </p:outputLabel>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pEditar2" header="Información Tecnología" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar2" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Tipo" />
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.tipoStr}"/>
+
+                                    <p:outputLabel value="Código"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.codigo}"/>
+
+                                    <p:outputLabel value="Código Própio"/>
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.codigoPropio}"/>
+
+                                    <p:outputLabel value="Nonbre" />
+                                    <p:outputLabel value="#{contratoBean.objetoDetalle.unTecnologia.nombre}"/>
+
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel id="pEditar3" header="Información General" style="margin-bottom:10px; padding-bottom: 0.4rem;" collapsed="false" toggleable="true">
+                                <p:panelGrid id="panelEditar3" columns="4" layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" 
+                                             columnClasses="ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo, ui-grid-col-2 col-etiqueta, ui-grid-col-4 col-campo">
+
+                                    <p:outputLabel value="Fehca Inicio" for="fechaInicio"/>
+                                    <p:datePicker id="fechaInicio" label="Fecha Inicio" value="#{contratoBean.objetoDetalle.fechaInicio}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Fecha Fin" for="fechaFin"/>
+                                    <p:datePicker id="fechaFin" label="Fecha Inicio" value="#{contratoBean.objetoDetalle.fechaFin}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true">
+                                    </p:datePicker>
+
+                                    <p:outputLabel value="Valor Suscriptor" for="valorSuscriptor"/>
+                                    <p:inputNumber id="valorSuscriptor" label="Valor" value="#{contratoBean.objetoDetalle.valorSuscriptor}" symbol="$" minValue="1" maxValue="1000000000" symbolPosition="p" decimalSeparator="," thousandSeparator="." required="true" />
+
+                                    <p:outputLabel value="Valor Convenio" for="valorConvenio" />
+                                    <p:inputNumber id="valorConvenio" label="Valor" value="#{contratoBean.objetoDetalle.valorConvenio}" symbol="$" minValue="1" maxValue="1000000000" symbolPosition="p" decimalSeparator="," thousandSeparator="." required="true" />
+
+                                    <p:outputLabel value="Activo" for="activo" />
+                                    <p:selectOneRadio id="activo" value="#{contratoBean.objetoDetalle.activo}">
+                                        <f:selectItem itemLabel="Si" itemValue="true" />
+                                        <f:selectItem itemLabel="No" itemValue="false" />
+                                    </p:selectOneRadio>
+
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:scrollPanel>
+                        <p:panelGrid id="panelAccionesEditar" class="footerdialog">
+                            <f:facet name="footer">
+                                <p:row>
+                                    <p:column colspan="4" style="text-align: center">
+                                        <p:commandButton value="Modificar" type="button" class="boton btn-azul"   onclick="modificarRemote()" validateClient="true" styleClass="btn-modificar" />
+                                        <p:remoteCommand name="modificarRemote" action="#{contratoBean.modificarDetalle}" update="panelEditar2" />
+                                        <p:commandButton value="Cancelar" type="button" class="boton btn-rojo" onclick="PF('dialogoEditarDetalle').hide()" immediate="true" styleClass="btn-cancelar"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                </div>
+            </p:dialog>
+
+        </center>
+    </ui:define>
+</ui:composition>
