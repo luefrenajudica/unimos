@@ -37,9 +37,11 @@
                             <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
                         </p:commandButton>
                         <p:commandButton rendered="#{suscripcionBean.accionAdicional2}" title="Cartera" actionListener="#{suscripcionBean.verCartera(obj.id)}" icon="pi pi-dollar" class="boton-normal btn1"/>
-                        
+                        <p:commandButton rendered="#{suscripcionBean.accionAdicional3}" title="Descargar Carnet" icon="pi pi-file-pdf" ajax="false" class="boton-normal btn1">
+                            <p:fileDownload value="#{suscripcionBean.generarCarnetUn(obj.id)}" />
+                        </p:commandButton>
                     </p:column>
-                    
+
                     <p:column headerText="ID" sortBy="#{obj.id}" filterBy="#{obj.id}">
                         <f:facet name="filter">
                             <p:inputText label="ID" maxlength="11" style="width: 95%;" onchange="PF('tablaRegistrosWidget').filter()"/>
@@ -189,7 +191,7 @@
 
                                     <p:outputLabel value="ID Suscripcion"/>
                                     <p:outputLabel value="#{suscripcionBean.objeto.id}"/>
-                                    
+
                                     <p:outputLabel value="Tipo Suscripcion"/>
                                     <p:outputLabel value="#{suscripcionBean.objeto.maeTipoValor}"/>
 
@@ -335,7 +337,7 @@
 
                                     <p:outputLabel value="ID Suscripcion"/>
                                     <p:outputLabel value="AUTO"/>
-                                    
+
                                     <p:outputLabel value="Tipo Suscripcion" for="tipoSuscripcion"/>
                                     <p:selectOneMenu id="tipoSuscripcion" label="Tipo Suscripcion" value="#{suscripcionBean.objeto.maeTipoId}">
                                         <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
@@ -349,13 +351,13 @@
 
                                     <p:outputLabel value="Fecha Fin"  style="font-weight:bold" for="fechaFin" />
                                     <p:datePicker id="fechaFin" label="Fecha Fin" value="#{suscripcionBean.objeto.fechaFin}" disabled="true" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
-                                    
+
                                     <p:outputLabel value="Plan" for="plan"/>
                                     <p:selectOneMenu id="plan" label="Plan" value="#{suscripcionBean.objeto.maePlanId}">
                                         <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{suscripcionBean.listaMaePlanes}" var="plan" itemValue="#{plan.id}"  itemLabel="#{plan.nombre}" itemDescription="#{plan.descripcion}"/>
                                     </p:selectOneMenu>
-                                    
+
                                     <p:outputLabel value="Valor"/>
                                     <p:outputLabel value="#{suscripcionBean.objeto.valor}">
                                         <f:convertNumber pattern="$ #,##0.00"/>
@@ -500,7 +502,7 @@
 
                                     <p:outputLabel value="ID Suscripcion"/>
                                     <p:outputLabel value="#{suscripcionBean.objeto.id}"/>
-                                    
+
                                     <p:outputLabel value="Tipo Suscripcion" for="tipoSuscripcion"/>
                                     <p:selectOneMenu id="tipoSuscripcion" label="Tipo Suscripcion" value="#{suscripcionBean.objeto.maeTipoId}">
                                         <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
@@ -661,7 +663,7 @@
                     </p:scrollPanel>
                 </h:form>
             </p:dialog>
-            
+
             <!-- Cartera -->
             <p:dialog header="Cartera" widgetVar="dialogoCartera" appendTo="@(body)" modal="true" 
                       draggable="true" resizable="true" closable="true" closeOnEscape="true"
@@ -677,7 +679,7 @@
 
                                     <p:outputLabel value="ID Suscripcion"/>
                                     <p:outputLabel value="#{suscripcionBean.objeto.id}"/>
-                                    
+
                                     <p:outputLabel value="Tipo Suscripcion"/>
                                     <p:outputLabel value="#{suscripcionBean.objeto.maeTipoValor}"/>
 
@@ -706,7 +708,7 @@
                                              styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
                                     <p:dataTable id="tablaCarteras" var="cart" value="#{suscripcionBean.objeto.listaSuscripcionCarteras}" rowKey="#{cart.id}"
                                                  styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
-                                        
+
                                         <p:column headerText="Fecha Generación">
                                             <h:outputText value="#{cart.fechaGeneracion}">
                                                 <f:convertDateTime pattern="yyyy-MM-dd" />
@@ -747,7 +749,7 @@
                                              styleClass="ui-panelgrid-blank ui-fluid grid-bicolor" >
                                     <p:dataTable id="tablaPagos" var="pag" value="#{suscripcionBean.objeto.listaSuscripcionPagos}" rowKey="#{pag.id}"
                                                  styleClass="tablaNueva" emptyMessage="No se encontraron registros" >
-                                        
+
                                         <p:column headerText="Fecha Fin">
                                             <h:outputText value="#{pag.fecha}">
                                                 <f:convertDateTime pattern="yyyy-MM-dd" />
@@ -778,7 +780,7 @@
                     </h:form>
                 </div>
             </p:dialog>
-            
+
             <!-- Crear Pago -->
             <p:dialog header="CrearPago" widgetVar="dialogoCrearPago" appendTo="@(body)" modal="true" 
                       draggable="true" resizable="true" closable="true" closeOnEscape="true"
@@ -797,16 +799,16 @@
                                         <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{suscripcionBean.listaMaeFormasPago}" var="forma" itemValue="#{forma.id}"  itemLabel="#{forma.nombre}" itemDescription="#{forma.descripcion}"/>
                                     </p:selectOneMenu>
-                                    
+
                                     <p:outputLabel value=""/>                                    
                                     <p:outputLabel value=""/>
 
                                     <p:outputLabel value="Fecha"  style="font-weight:bold" for="fecha"/>
                                     <p:datePicker id="fecha" label="Fecha" value="#{suscripcionBean.objetoPago.fecha}" pattern="yyyy-MM-dd" monthNavigator="true" yearNavigator="true" showWeek="true" required="true"/>
-                                    
+
                                     <p:outputLabel value="Valor" for="valor"/>
                                     <p:inputNumber id="valor" label="Valor" value="#{suscripcionBean.objetoPago.valor}" symbol="$" minValue="1" maxValue="1000000000" symbolPosition="p" decimalSeparator="," thousandSeparator="." required="true" />
-                                    
+
                                 </p:panelGrid>
                             </p:panel>                            
                         </p:scrollPanel>

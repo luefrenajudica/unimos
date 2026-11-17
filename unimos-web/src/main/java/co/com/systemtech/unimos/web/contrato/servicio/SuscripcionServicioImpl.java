@@ -10,6 +10,8 @@ import co.com.systemtech.unimos.dominio.administracion.GnMaestroTipo;
 import co.com.systemtech.unimos.dominio.administracion.Ubicacion;
 import co.com.systemtech.unimos.dominio.contrato.UnComercialComision;
 import co.com.systemtech.unimos.dominio.contrato.UnSuscripcion;
+import co.com.systemtech.unimos.dominio.contrato.UnSuscripcionCarnetDto;
+import co.com.systemtech.unimos.dominio.contrato.UnSuscripcionCarnetListaDto;
 import co.com.systemtech.unimos.dominio.contrato.UnSuscripcionCartera;
 import co.com.systemtech.unimos.dominio.contrato.UnSuscripcionPago;
 import co.com.systemtech.unimos.dominio.contrato.UnSuscripcionPersona;
@@ -29,9 +31,16 @@ import co.com.systemtech.unimos.web.utilidades.RemotoEJB;
 import co.com.systemtech.unimos.web.utilidades.Url;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Date;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  *
@@ -126,6 +135,16 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
                             break;
                         case Url.ACCION_GUARDAR:
                             guardarPago(bean);
+                            break;
+                        case Url.ACCION_ADICIONAL_1:
+                            generarCarnetSuscripcion(bean);
+                            break;
+                    }
+                    break;
+                case Url.ACCION_ADICIONAL_3:
+                    switch (bean.getDoAccion()) {
+                        case Url.ACCION_ADICIONAL_1:
+                            generarCarnetSuscripcion(bean);
                             break;
                     }
                     break;
@@ -499,6 +518,50 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             obj.setMaeFormaPagoCodigo(estadoCiv.getValor());
             obj.setMaeFormaPagoValor(estadoCiv.getDescripcion());
         }
+    }
+
+    private void generarCarnetSuscripcion(SuscripcionBean bean) {
+
+        try {
+            UnSuscripcionCarnetDto certificado = new UnSuscripcionCarnetDto();
+            List<UnSuscripcionCarnetListaDto> certificadoList = new ArrayList<>();
+            List<UnSuscripcionCarnetDto> certificadoListPadre = new ArrayList<>();
+            bean.setObjeto(getSuscripcionRemoto().consultar(bean.getObjeto().getId()));
+
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+//            LocalDateTime fecha = LocalDateTime.parse(bean.getObjeto().getCarCargasId().getFechaHoraCrea().toString(), formatter);
+            certificado.setNombreCompletoTitular(bean.getObjeto().getUnPersona().getNombresApellidos());
+            certificado.setCedulaTitular(bean.getObjeto().getUnPersona().getDocumentoNumero());
+            certificado.setVencimientoContrato(bean.getObjeto().getFechaFin().toString());
+            //certificado.setMonth(String.valueOf(fecha.getMonth()));
+            //Validación para el informe de oportunidad según la resolución 1552 de 2013
+
+            for (UnSuscripcionPersona objBeneficiario : bean.getObjeto().getListaSuscripcionPersonas()) {
+                // 1. Crear una NUEVA instancia DENTRO del ciclo
+                UnSuscripcionCarnetListaDto nuevoBeneficiario = new UnSuscripcionCarnetListaDto();
+
+                // 2. Asignarle el nombre a la nueva instancia
+                nuevoBeneficiario.setNombreBeneficiario(objBeneficiario.getUnPersona().getNombresApellidos());
+
+                // 3. Agregar la nueva instancia a la lista
+                certificadoList.add(nuevoBeneficiario);
+            }
+            certificado.setListaSuscripcionCarnetListaDto(certificadoList);
+            certificadoListPadre.add(certificado);
+            // Jasper
+            InputStream is = getClass().getResourceAsStream("/reportes/carnet_suscripcion_v2.jasper");
+            JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(certificadoListPadre);
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put(JRParameter.REPORT_LOCALE, new Locale("es", "CO"));
+
+            byte[] bytes = JasperRunManager.runReportToPdf(is, parameters, beanColDataSource);
+            //InputStream streamArchivo = new ByteArrayInputStream(bytes);
+            bean.setPdfBytes(bytes);
+
+        } catch (Exception e) {
+            bean.addError("Error inesperado al generar el carnet. " + e);
+        }
+
     }
 
 }
