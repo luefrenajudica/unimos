@@ -651,7 +651,11 @@ public class SuscripcionBean extends Url {
                             break;
                     }
                     break;
-
+                case Url.ACCION_ADICIONAL_3:
+                    if (getDoAccion() == Url.ACCION_ADICIONAL_1) {
+                        crearLog("Generacion de carnet de usuario: " + objeto.getUnPersona().getId());
+                    }
+                    break;
             }
         }
         generarMensajes();
