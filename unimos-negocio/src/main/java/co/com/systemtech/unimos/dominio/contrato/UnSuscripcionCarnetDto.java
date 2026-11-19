@@ -17,6 +17,7 @@ public class UnSuscripcionCarnetDto extends Auditoria {
     private String cedulaTitular;
     private List<UnSuscripcionCarnetListaDto> listaSuscripcionCarnetListaDto;
     private String vencimientoContrato;
+    private String sede;
 
     public String getNombreCompletoTitular() {
         return nombreCompletoTitular;
@@ -48,6 +49,14 @@ public class UnSuscripcionCarnetDto extends Auditoria {
 
     public void setVencimientoContrato(String vencimientoContrato) {
         this.vencimientoContrato = vencimientoContrato;
+    }
+
+    public String getSede() {
+        return sede;
+    }
+
+    public void setSede(String sede) {
+        this.sede = sede;
     }
 
 }
