@@ -463,46 +463,63 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
 
     @Override
     public List<UnPersona> consultarSuscritosLista(ParamConsulta paramConsulta) throws Exception {
-        List<UnPersona> listResult = new ArrayList();
+        List<UnPersona> listResult = new ArrayList<>();
         try {
             String strQuery = "SELECT s FROM UnSuscripcionPersonas s "
-                    + " INNER JOIN UnPersonas p ON s.unPersonasId.id = p.id "
-                    + " INNER JOIN UnSuscripciones j ON s.unSuscripcionesId.id = j.id ";
+                    + " INNER JOIN s.unPersonasId p "
+                    + " INNER JOIN s.unSuscripcionesId j "
+                    + " WHERE 1=1 ";
+
             if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
                         case "unSuscripcion.id":
-                            strQuery += "AND s.unSuscripcionesId.id = " + e.getValue() + " ";
+                            strQuery += " AND s.unSuscripcionesId.id = " + e.getValue() + " ";
                             break;
                         case "documentoNumero":
-                            strQuery += "AND p.documentoNumero LIKE '" + e.getValue() + "%' ";
+                            strQuery += " AND p.documentoNumero LIKE '" + e.getValue() + "%' ";
                             break;
                         case "primerNombre":
-                            strQuery += "AND p.primerNombre LIKE '" + e.getValue() + "%' ";
+                            strQuery += " AND p.primerNombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "segundoNombre":
-                            strQuery += "AND p.segundoNombre LIKE '" + e.getValue() + "%' ";
+                            strQuery += " AND p.segundoNombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "primerApellido":
-                            strQuery += "AND p.primerApellido LIKE '" + e.getValue() + "%' ";
+                            strQuery += " AND p.primerApellido LIKE '" + e.getValue() + "%' ";
                             break;
                         case "segundoApellido":
-                            strQuery += "AND p.segundoApellido LIKE '" + e.getValue() + "%' ";
+                            strQuery += " AND p.segundoApellido LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unSuscripcion.maeTipoValor":
-                            strQuery += "AND j.maeTipoId = " + e.getValue() + " ";
+                            strQuery += " AND j.maeTipoId = " + e.getValue() + " ";
                             break;
                         case "unSuscripcion.maePlanValor":
-                            strQuery += "AND j.maePlanId = " + e.getValue() + " ";
+                            strQuery += " AND j.maePlanId = " + e.getValue() + " ";
                             break;
-
                     }
                 }
             }
-            strQuery += "ORDER BY ";
-            if (paramConsulta.getOrden() != null) {
-                strQuery += "s." + paramConsulta.getOrden() + " "
-                        + (paramConsulta.isAscendente() ? "ASC" : "DESC");
+
+            strQuery += " ORDER BY ";
+            if (paramConsulta.getOrden() != null && !paramConsulta.getOrden().trim().isEmpty()) {
+                String campoOrden = paramConsulta.getOrden().trim();
+                String alias = "s.";
+                if (campoOrden.equals("documentoNumero") || campoOrden.equals("primerNombre")
+                        || campoOrden.equals("segundoNombre") || campoOrden.equals("primerApellido")
+                        || campoOrden.equals("segundoApellido")) {
+                    alias = "p.";
+                } else if (campoOrden.contains("maeTipoValor")) {
+                    alias = "j.";
+                    campoOrden = "maeTipoId";
+                } else if (campoOrden.contains("maePlanValor")) {
+                    alias = "j.";
+                    campoOrden = "maePlanId";
+                } else if (campoOrden.equals("unSuscripcion.id")) {
+                    alias = "j.";
+                    campoOrden = "id";
+                }
+                strQuery += alias + campoOrden + " " + (paramConsulta.isAscendente() ? "ASC" : "DESC");
             } else {
                 strQuery += "s.id ASC";
             }
@@ -513,13 +530,15 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
             for (UnSuscripcionPersonas per : list) {
                 listResult.add(castEntidadNegocio(per));
             }
+
         } catch (NoResultException e) {
-            listResult = new ArrayList();
+            listResult = new ArrayList<>();
         } catch (Exception e) {
             Exception(CONSULTAR_TODOS, e);
         } finally {
             cerrarEntityManager();
         }
+
         return listResult;
     }
 
