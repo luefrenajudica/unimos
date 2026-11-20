@@ -445,14 +445,20 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
             if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
-                        case "codigo":
+                        case "unTecnologia.codigo":
                             strQuery += "AND t.codigo = '" + e.getValue() + "' ";
                             break;
-                        case "codigoPropio":
+                        case "unTecnologia.codigoPropio":
                             strQuery += "AND t.codigoPropio = '" + e.getValue() + "' ";
                             break;
-                        case "nombre":
+                        case "unTecnologia.nombre":
                             strQuery += "AND t.nombre LIKE '" + e.getValue() + "%' ";
+                            break;
+                        case "unContrato.unEntidad.nit":
+                            strQuery += "AND e.nit = '" + e.getValue() + "' ";
+                            break;
+                        case "unContrato.unEntidad.nombreComercial":
+                            strQuery += "AND e.nombreComercial LIKE '" + e.getValue() + "%' ";
                             break;
                     }
                 }
@@ -481,17 +487,23 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
                     + "WHERE c.activo = true "
                     + "AND d.activo = true "
                     + "AND t.activa = true ";
-            if (paramConsulta.getFiltros() != null) {
+                if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
-                        case "codigo":
+                        case "unTecnologia.codigo":
                             strQuery += "AND t.codigo = '" + e.getValue() + "' ";
                             break;
-                        case "codigoPropio":
+                        case "unTecnologia.codigoPropio":
                             strQuery += "AND t.codigoPropio = '" + e.getValue() + "' ";
                             break;
-                        case "nombre":
+                        case "unTecnologia.nombre":
                             strQuery += "AND t.nombre LIKE '" + e.getValue() + "%' ";
+                            break;
+                        case "unContrato.unEntidad.nit":
+                            strQuery += "AND e.nit = '" + e.getValue() + "' ";
+                            break;
+                        case "unContrato.unEntidad.nombreComercial":
+                            strQuery += "AND e.nombreComercial LIKE '" + e.getValue() + "%' ";
                             break;
                     }
                 }

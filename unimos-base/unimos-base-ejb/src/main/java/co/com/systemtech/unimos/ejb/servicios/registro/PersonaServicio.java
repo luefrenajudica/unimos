@@ -210,7 +210,7 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         }
         return listResult;
     }
-    
+
     @Override
     public List<UnPersonaContacto> consultarContactos(int personaId) throws Exception {
         List<UnPersonaContacto> listResult = new ArrayList();
@@ -233,7 +233,7 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         }
         return listResult;
     }
-    
+
     @Override
     public UnPersonaContacto consultarContacto(int id) throws Exception {
         UnPersonaContacto objRes = null;
@@ -248,7 +248,7 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         }
         return objRes;
     }
-    
+
     @Override
     public int insertarContacto(UnPersonaContacto obj) throws Exception {
         int _id = 0;
@@ -367,8 +367,8 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         per.setFechaHoraModifica(obj.getFechaHoraModifica());
         return per;
     }
-    
-    public static UnPersonaContacto castEntidadNegocio(UnPersonaContactos per){
+
+    public static UnPersonaContacto castEntidadNegocio(UnPersonaContactos per) {
         UnPersonaContacto obj = new UnPersonaContacto();
         obj.setId(per.getId());
         obj.setUnPersona(new UnPersona(per.getUnPersonasId().getId()));
@@ -388,8 +388,8 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         obj.setFechaHoraModifica(per.getFechaHoraModifica());
         return obj;
     }
-    
-    public static UnPersonaContactos castNegocioEntidad(UnPersonaContacto obj){
+
+    public static UnPersonaContactos castNegocioEntidad(UnPersonaContacto obj) {
         UnPersonaContactos per = new UnPersonaContactos();
         per.setId(obj.getId());
         per.setUnPersonasId(new UnPersonas(obj.getUnPersona().getId()));
@@ -402,17 +402,16 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         //Auditoria
         per.setUsuarioCrea(obj.getUsuarioCrea());
         per.setTerminalCrea(obj.getTerminalCrea());
-        per.setFechaHoraCrea(obj.getFechaHoraCrea());        
+        per.setFechaHoraCrea(obj.getFechaHoraCrea());
         per.setUsuarioModifica(obj.getUsuarioModifica());
         per.setTerminalModifica(obj.getTerminalModifica());
         per.setFechaHoraModifica(obj.getFechaHoraModifica());
         return per;
     }
-    
+
     /**
      * Consulata de personas y suscripciones
      */
-    
     @Override
     public int consultarSuscritosCantidadLista(ParamConsulta paramConsulta) throws Exception {
         int cant = 0;
@@ -428,6 +427,18 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
                         case "unPersona.documentoNumero":
                             strQuery += "AND p.documentoNumero = " + e.getValue() + " ";
                             break;
+                        case "primerNombre":
+                            strQuery += "AND p.primerNombre = '" + e.getValue() + "' ";
+                            break;
+                        case "segundoNombre":
+                            strQuery += "AND p.segundoNombre = '" + e.getValue() + "' ";
+                            break;
+                        case "primerApellido":
+                            strQuery += "AND p.primerApellido = '" + e.getValue() + "' ";
+                            break;
+                        case "segundoApellido":
+                            strQuery += "AND p.segundoApellido = '" + e.getValue() + "' ";
+                            break;
                     }
                 }
             }
@@ -442,7 +453,7 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         }
         return cant;
     }
-    
+
     @Override
     public List<UnPersona> consultarSuscritosLista(ParamConsulta paramConsulta) throws Exception {
         List<UnPersona> listResult = new ArrayList();
@@ -455,8 +466,20 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
                         case "id":
                             strQuery += "AND s.id = " + e.getValue() + " ";
                             break;
-                        case "unPersona.documentoNumero":
-                            strQuery += "AND p.documentoNumero = " + e.getValue() + " ";
+                        case "documentoNumero":
+                            strQuery += "AND p.documentoNumero = '" + e.getValue() + "' ";
+                            break;
+                        case "primerNombre":
+                            strQuery += "AND p.primerNombre = '" + e.getValue() + "' ";
+                            break;
+                        case "segundoNombre":
+                            strQuery += "AND p.segundoNombre = '" + e.getValue() + "' ";
+                            break;
+                        case "primerApellido":
+                            strQuery += "AND p.primerApellido = '" + e.getValue() + "' ";
+                            break;
+                        case "segundoApellido":
+                            strQuery += "AND p.segundoApellido = '" + e.getValue() + "' ";
                             break;
                     }
                 }
@@ -484,8 +507,8 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         }
         return listResult;
     }
-    
-    public static UnPersona castEntidadNegocio(UnSuscripcionPersonas per){
+
+    public static UnPersona castEntidadNegocio(UnSuscripcionPersonas per) {
         //Persona
         UnPersona obj = new UnPersona();
         obj.setId(per.getUnPersonasId().getId());
@@ -521,8 +544,8 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         UnSuscripcion objSuscrip = new UnSuscripcion();
         objSuscrip.setId(per.getUnSuscripcionesId().getId());
         objSuscrip.setFechaInicio(per.getFechaInicio());
-        objSuscrip.setFechaFin(per.getFechaFin());        
-        objSuscrip.setTitular(per.getTitular());        
+        objSuscrip.setFechaFin(per.getFechaFin());
+        objSuscrip.setTitular(per.getTitular());
         objSuscrip.setMaeTipoTipo(per.getUnSuscripcionesId().getMaeTipoTipo());
         objSuscrip.setMaeTipoId(per.getUnSuscripcionesId().getMaeTipoId());
         objSuscrip.setMaeTipoCodigo(per.getUnSuscripcionesId().getMaeTipoCodigo());
@@ -530,7 +553,7 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         objSuscrip.setMaePlanTipo(per.getUnSuscripcionesId().getMaePlanTipo());
         objSuscrip.setMaePlanId(per.getUnSuscripcionesId().getMaePlanId());
         objSuscrip.setMaePlanCodigo(per.getUnSuscripcionesId().getMaePlanCodigo());
-        objSuscrip.setMaePlanValor(per.getUnSuscripcionesId().getMaePlanValor());        
+        objSuscrip.setMaePlanValor(per.getUnSuscripcionesId().getMaePlanValor());
         obj.setUnSuscripcion(objSuscrip);
         //Auditoría
         obj.setUsuarioCrea(per.getUsuarioCrea());
