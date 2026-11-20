@@ -417,27 +417,34 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         int cant = 0;
         try {
             String strQuery = "SELECT COUNT(s) FROM UnSuscripcionPersonas s "
-                    + " INNER JOIN UnPersonas p ON s.unPersonasId.id = p.id ";
+                    + " INNER JOIN UnPersonas p ON s.unPersonasId.id = p.id "
+                    + " INNER JOIN UnSuscripciones j ON s.unSuscripcionesId.id = j.id ";
             if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
-                        case "id":
-                            strQuery += "AND s.id = " + e.getValue() + " ";
+                        case "unSuscripcion.id":
+                            strQuery += "AND s.unSuscripcionesId.id = " + e.getValue() + " ";
                             break;
-                        case "unPersona.documentoNumero":
-                            strQuery += "AND p.documentoNumero = " + e.getValue() + " ";
+                        case "documentoNumero":
+                            strQuery += "AND p.documentoNumero LIKE '" + e.getValue() + "%' ";
                             break;
                         case "primerNombre":
-                            strQuery += "AND p.primerNombre = '" + e.getValue() + "' ";
+                            strQuery += "AND p.primerNombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "segundoNombre":
-                            strQuery += "AND p.segundoNombre = '" + e.getValue() + "' ";
+                            strQuery += "AND p.segundoNombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "primerApellido":
-                            strQuery += "AND p.primerApellido = '" + e.getValue() + "' ";
+                            strQuery += "AND p.primerApellido LIKE '" + e.getValue() + "%' ";
                             break;
                         case "segundoApellido":
-                            strQuery += "AND p.segundoApellido = '" + e.getValue() + "' ";
+                            strQuery += "AND p.segundoApellido LIKE '" + e.getValue() + "%' ";
+                            break;
+                        case "unSuscripcion.maeTipoValor":
+                            strQuery += "AND j.maeTipoId = " + e.getValue() + " ";
+                            break;
+                        case "unSuscripcion.maePlanValor":
+                            strQuery += "AND j.maePlanId = " + e.getValue() + " ";
                             break;
                     }
                 }
@@ -459,28 +466,36 @@ public class PersonaServicio extends GenericoServicio implements PersonaRemoto {
         List<UnPersona> listResult = new ArrayList();
         try {
             String strQuery = "SELECT s FROM UnSuscripcionPersonas s "
-                    + " INNER JOIN UnPersonas p ON s.unPersonasId.id = p.id ";
+                    + " INNER JOIN UnPersonas p ON s.unPersonasId.id = p.id "
+                    + " INNER JOIN UnSuscripciones j ON s.unSuscripcionesId.id = j.id ";
             if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
-                        case "id":
-                            strQuery += "AND s.id = " + e.getValue() + " ";
+                        case "unSuscripcion.id":
+                            strQuery += "AND s.unSuscripcionesId.id = " + e.getValue() + " ";
                             break;
                         case "documentoNumero":
-                            strQuery += "AND p.documentoNumero = '" + e.getValue() + "' ";
+                            strQuery += "AND p.documentoNumero LIKE '" + e.getValue() + "%' ";
                             break;
                         case "primerNombre":
-                            strQuery += "AND p.primerNombre = '" + e.getValue() + "' ";
+                            strQuery += "AND p.primerNombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "segundoNombre":
-                            strQuery += "AND p.segundoNombre = '" + e.getValue() + "' ";
+                            strQuery += "AND p.segundoNombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "primerApellido":
-                            strQuery += "AND p.primerApellido = '" + e.getValue() + "' ";
+                            strQuery += "AND p.primerApellido LIKE '" + e.getValue() + "%' ";
                             break;
                         case "segundoApellido":
-                            strQuery += "AND p.segundoApellido = '" + e.getValue() + "' ";
+                            strQuery += "AND p.segundoApellido LIKE '" + e.getValue() + "%' ";
                             break;
+                        case "unSuscripcion.maeTipoValor":
+                            strQuery += "AND j.maeTipoId = " + e.getValue() + " ";
+                            break;
+                        case "unSuscripcion.maePlanValor":
+                            strQuery += "AND j.maePlanId = " + e.getValue() + " ";
+                            break;
+
                     }
                 }
             }

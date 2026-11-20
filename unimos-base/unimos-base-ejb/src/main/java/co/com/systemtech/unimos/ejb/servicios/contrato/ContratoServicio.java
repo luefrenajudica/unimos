@@ -427,7 +427,7 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
         }
         return obj;
     }
-    
+
     /*
     * Contrato Detalle
      */
@@ -445,17 +445,20 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
             if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
+                        case "unTecnologia.tipoStr":
+                            strQuery += "AND t.maeServicioHabilitacionValor LIKE '" + e.getValue() + "%' ";
+                            break;
                         case "unTecnologia.codigo":
-                            strQuery += "AND t.codigo = '" + e.getValue() + "' ";
+                            strQuery += "AND t.codigo LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unTecnologia.codigoPropio":
-                            strQuery += "AND t.codigoPropio = '" + e.getValue() + "' ";
+                            strQuery += "AND t.codigoPropio LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unTecnologia.nombre":
                             strQuery += "AND t.nombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unContrato.unEntidad.nit":
-                            strQuery += "AND e.nit = '" + e.getValue() + "' ";
+                            strQuery += "AND e.nit LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unContrato.unEntidad.nombreComercial":
                             strQuery += "AND e.nombreComercial LIKE '" + e.getValue() + "%' ";
@@ -464,7 +467,7 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
                 }
             }
             cant = (int) (long) getEntityManager().createQuery(strQuery)
-//                    .setParameter("contrato_id", (int) paramConsulta.getParametroConsulta1())
+                    //                    .setParameter("contrato_id", (int) paramConsulta.getParametroConsulta1())
                     .getSingleResult();
         } catch (NoResultException e) {
             cant = 0;
@@ -487,20 +490,23 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
                     + "WHERE c.activo = true "
                     + "AND d.activo = true "
                     + "AND t.activa = true ";
-                if (paramConsulta.getFiltros() != null) {
+            if (paramConsulta.getFiltros() != null) {
                 for (Map.Entry e : paramConsulta.getFiltros().entrySet()) {
                     switch ((String) e.getKey()) {
+                        case "unTecnologia.tipoStr":
+                            strQuery += "AND t.maeServicioHabilitacionValor LIKE '" + e.getValue() + "%' ";
+                            break;
                         case "unTecnologia.codigo":
-                            strQuery += "AND t.codigo = '" + e.getValue() + "' ";
+                            strQuery += "AND t.codigo LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unTecnologia.codigoPropio":
-                            strQuery += "AND t.codigoPropio = '" + e.getValue() + "' ";
+                            strQuery += "AND t.codigoPropio LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unTecnologia.nombre":
                             strQuery += "AND t.nombre LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unContrato.unEntidad.nit":
-                            strQuery += "AND e.nit = '" + e.getValue() + "' ";
+                            strQuery += "AND e.nit LIKE '" + e.getValue() + "%' ";
                             break;
                         case "unContrato.unEntidad.nombreComercial":
                             strQuery += "AND e.nombreComercial LIKE '" + e.getValue() + "%' ";
@@ -516,7 +522,7 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
                 strQuery += "d.id ASC";
             }
             List<UnContratoDetalles> list = getEntityManager().createQuery(strQuery)
-//                    .setParameter("contrato_id", (int) paramConsulta.getParametroConsulta1())
+                    //                    .setParameter("contrato_id", (int) paramConsulta.getParametroConsulta1())
                     .setFirstResult(paramConsulta.getPrimerRegistro())
                     .setMaxResults(paramConsulta.getRegistrosPagina())
                     .getResultList();
@@ -564,7 +570,7 @@ public class ContratoServicio extends GenericoServicio implements ContratoRemoto
                 per.getUnContratosId().getActivo()
         );
         UnEntidad objEnt = new UnEntidad(
-                per.getUnContratosId().getUnEntidadesId().getId(), 
+                per.getUnContratosId().getUnEntidadesId().getId(),
                 per.getUnContratosId().getUnEntidadesId().getMaeTipoTipo(),
                 per.getUnContratosId().getUnEntidadesId().getMaeTipoId(),
                 per.getUnContratosId().getUnEntidadesId().getMaeTipoCodigo(),
