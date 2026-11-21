@@ -47,43 +47,43 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
  * @author rpalacic (Raúl Ignacio Palacios Correa) - SystemTech Integral
  */
 public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionServicioIface {
-    
+
     private SuscripcionRemoto getSuscripcionRemoto() throws Exception {
         return (SuscripcionRemoto) RemotoEJB.getEJBRemoto("SuscripcionServicio", SuscripcionRemoto.class.getName());
     }
-    
+
     private CarteraRemoto getCarteraRemoto() throws Exception {
         return (CarteraRemoto) RemotoEJB.getEJBRemoto("CarteraServicio", CarteraRemoto.class.getName());
     }
-    
+
     private PagoRemoto getPagoRemoto() throws Exception {
         return (PagoRemoto) RemotoEJB.getEJBRemoto("PagoServicio", PagoRemoto.class.getName());
     }
-    
+
     private MaestroRemoto getMaestroRemoto() throws Exception {
         return (MaestroRemoto) RemotoEJB.getEJBRemoto("MaestroServicio", MaestroRemoto.class.getName());
     }
-    
+
     private PersonaRemoto getPersonaRemoto() throws Exception {
         return (PersonaRemoto) RemotoEJB.getEJBRemoto("PersonaServicio", PersonaRemoto.class.getName());
     }
-    
+
     private SedeRemoto getSedeRemoto() throws Exception {
         return (SedeRemoto) RemotoEJB.getEJBRemoto("SedeServicio", SedeRemoto.class.getName());
     }
-    
+
     private ComercialRemoto getComercialRemoto() throws Exception {
         return (ComercialRemoto) RemotoEJB.getEJBRemoto("ComercialServicio", ComercialRemoto.class.getName());
     }
-    
+
     private ComisionRemoto getComisionRemoto() throws Exception {
         return (ComisionRemoto) RemotoEJB.getEJBRemoto("ComisionServicio", ComisionRemoto.class.getName());
     }
-    
+
     private UbicacionRemoto getUbicacionRemoto() throws Exception {
         return (UbicacionRemoto) RemotoEJB.getEJBRemoto("UbicacionServicio", UbicacionRemoto.class.getName());
     }
-    
+
     @Override
     public void Accion(SuscripcionBean bean) {
         if (super.ValidarSesion(bean)) {
@@ -115,10 +115,10 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
                             listarPersonas(bean);
                             break;
                         case Url.ACCION_CREAR:
-                            
+
                             break;
                         case Url.ACCION_GUARDAR:
-                            
+
                             break;
                         case Url.ACCION_ADICIONAL_1:
                             seleccionarPersona(bean);
@@ -156,7 +156,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             System.err.println("Sesion inactiva");
         }
     }
-    
+
     private void listar(SuscripcionBean bean) {
         try {
             bean.getParamConsulta().setCantidadRegistros(getSuscripcionRemoto().consultarCantidadLista(bean.getParamConsulta()));
@@ -165,7 +165,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void ver(SuscripcionBean bean) {
         try {
             bean.setObjeto(getSuscripcionRemoto().consultar(bean.getObjeto().getId()));
@@ -173,7 +173,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void crear(SuscripcionBean bean) {
         try {
             bean.setObjeto(new UnSuscripcion());
@@ -192,7 +192,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void guardar(SuscripcionBean bean) {
         try {
             //Llenar campos
@@ -257,7 +257,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void editar(SuscripcionBean bean) {
         try {
             bean.setObjeto(getSuscripcionRemoto().consultar(bean.getObjeto().getId()));
@@ -265,7 +265,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void modificar(SuscripcionBean bean) {
         try {
             mapearMaestros(bean.getObjeto(), bean);
@@ -288,7 +288,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void borrar(SuscripcionBean bean) {
         try {
             bean.setObjeto(getSuscripcionRemoto().eliminar(bean.getObjeto().getId()));
@@ -297,7 +297,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void cargas(SuscripcionBean bean) {
         try {
             switch (bean.getAccion()) {
@@ -316,10 +316,10 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
                     break;
             }
         } catch (Exception ex) {
-            
+
         }
     }
-    
+
     @Override
     public void cargasInicial(SuscripcionBean bean) {
         try {
@@ -349,7 +349,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError("No fue posible cargar las listas de apoyo");
         }
     }
-    
+
     private void mapearMaestros(UnSuscripcion obj, SuscripcionBean bean) {
         // Tipo Suscripcion
         if (bean.getMapMaeTiposSuscripcion() != null) {
@@ -385,7 +385,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void seleccionarPersona(SuscripcionBean bean) {
         try {
             switch (bean.getOrigenPersona()) {
@@ -426,7 +426,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void crearPago(SuscripcionBean bean) {
         try {
             bean.setObjetoPago(new UnSuscripcionPago());
@@ -436,7 +436,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void guardarPago(SuscripcionBean bean) {
         try {
             //Llenar campos
@@ -509,7 +509,7 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             bean.addError(e.getMessage());
         }
     }
-    
+
     private void mapearMaestrosPago(UnSuscripcionPago obj, SuscripcionBean bean) {
         // Forma de pago
         if (bean.getMapMaeFormasPago() != null) {
@@ -519,9 +519,9 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             obj.setMaeFormaPagoValor(estadoCiv.getDescripcion());
         }
     }
-    
+
     private void generarCarnetSuscripcion(SuscripcionBean bean) {
-        
+
         try {
             UnSuscripcionCarnetDto certificado = new UnSuscripcionCarnetDto();
             List<UnSuscripcionCarnetListaDto> certificadoList = new ArrayList<>();
@@ -530,41 +530,32 @@ public class SuscripcionServicioImpl extends AccionesBO implements SuscripcionSe
             certificado.setNombreCompletoTitular(bean.getObjeto().getUnPersona().getNombresApellidos());
             certificado.setCedulaTitular(bean.getObjeto().getUnPersona().getDocumentoNumero());
             certificado.setVencimientoContrato(bean.getObjeto().getFechaFin().toString());
-            if (bean.getObjeto().getSede().getId() == 2) {
-                certificado.setSede("Sabaneta Antioquia\n"
-                        + "Calle 63 Sur 43A 15 Of 202\n"
-                        + "3107879975");
-            } else {
-                certificado.setSede("Choco, Quibdó\n"
-                        + "Cra 5 32 14 Miraflores\n"
-                        + "3142139561");
-            }
-            
+            certificado.setSedeSabaneta("Sabaneta Antioquia\n"
+                    + "Calle 63 Sur 43A 15 Of 202\n"
+                    + "3107879975");
+            certificado.setSedeQuibdo("Choco, Quibdó\n"
+                    + "Cra 5 32 14 Miraflores\n"
+                    + "3142139561");
+
             for (UnSuscripcionPersona objBeneficiario : bean.getObjeto().getListaSuscripcionPersonas()) {
-                // 1. Crear una NUEVA instancia DENTRO del ciclo
                 UnSuscripcionCarnetListaDto nuevoBeneficiario = new UnSuscripcionCarnetListaDto();
-
-                // 2. Asignarle el nombre a la nueva instancia
                 nuevoBeneficiario.setNombreBeneficiario(objBeneficiario.getUnPersona().getNombresApellidos());
-
-                // 3. Agregar la nueva instancia a la lista
                 certificadoList.add(nuevoBeneficiario);
             }
             certificado.setListaSuscripcionCarnetListaDto(certificadoList);
             certificadoListPadre.add(certificado);
-            // Jasper
             InputStream is = getClass().getResourceAsStream("/reportes/carnet_suscripcion_v2.jasper");
             JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(certificadoListPadre);
             Map<String, Object> parameters = new HashMap<>();
             parameters.put(JRParameter.REPORT_LOCALE, new Locale("es", "CO"));
-            
+
             byte[] bytes = JasperRunManager.runReportToPdf(is, parameters, beanColDataSource);
             bean.setPdfBytes(bytes);
-            
+
         } catch (Exception e) {
             bean.addError("Error inesperado al generar el carnet. " + e);
         }
-        
+
     }
-    
+
 }

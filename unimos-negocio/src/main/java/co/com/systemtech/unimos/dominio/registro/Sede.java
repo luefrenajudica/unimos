@@ -38,6 +38,13 @@ public class Sede extends Auditoria {
         this.descripcion = descripcion;
     }
 
+    public Sede(Integer id, String nombre, String direccion, String telefono) {
+        this.id = id;
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.telefono = telefono;
+    }
+    
     public Integer getId() {
         return id;
     }
